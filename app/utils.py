@@ -1,7 +1,7 @@
 from reportlab.pdfgen import canvas
 from math import cos, sin, pi
 import numpy as np
-from inputs import UserInputs
+from app.inputs import UserInputs
 import pypdf
 from tempfile import NamedTemporaryFile
 
@@ -11,8 +11,8 @@ def create_watermark_pdf(
 ):
     watermark = canvas.Canvas(file_name, pagesize=(width, height))
 
-    horizontal_box_spacing = width / inputs.number_of_horizontal_boxes
-    vertical_box_spacing = height / inputs.number_of_vertical_boxes
+    horizontal_box_spacing = width / inputs.horizontal_boxes
+    vertical_box_spacing = height / inputs.vertical_boxes
 
     rotation_angle_rad = inputs.angle * pi / 180
     rotation_matrix = np.array(
@@ -23,7 +23,7 @@ def create_watermark_pdf(
     )
 
     watermark.setFillColor(inputs.color, alpha=inputs.opacity)
-    watermark.setFont(inputs.font, inputs.fontsize)
+    watermark.setFont(inputs.font, inputs.size)
     watermark.rotate(inputs.angle)
 
     if inputs.margin:
@@ -31,8 +31,8 @@ def create_watermark_pdf(
     else:
         start_index = 0
 
-    for x_index in range(start_index, inputs.number_of_horizontal_boxes + 1):
-        for y_index in range(start_index, inputs.number_of_vertical_boxes + 1):
+    for x_index in range(start_index, inputs.horizontal_boxes + 1):
+        for y_index in range(start_index, inputs.vertical_boxes + 1):
             # Coordinates to draw at in original coordinates system
             x_base = x_index * horizontal_box_spacing
             y_base = y_index * vertical_box_spacing

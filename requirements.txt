@@ -1,5 +1,5 @@
-python==3.11
-pypdf==3.11
-pillow==9.5.0
-reportlab==4.0.4
-numpy==1.25.0
+pypdf>=3.11
+pillow>=9.5.0
+reportlab>=4.0.4
+numpy>=1.25.0
+click>=8.1.3

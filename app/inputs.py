@@ -11,9 +11,9 @@ class UserInputs:
         opacity=0.1,
         angle: float = 45,
         font: str = "Helvetica",
-        fontsize: int = 12,
-        number_of_horizontal_boxes: int = 3,
-        number_of_vertical_boxes: int = 6,
+        size: int = 12,
+        horizontal_boxes: int = 3,
+        vertical_boxes: int = 6,
         margin: bool = False,
         save_to: Union[None, str] = None,
     ) -> None:
@@ -23,8 +23,8 @@ class UserInputs:
         self.opacity = opacity
         self.angle = angle
         self.font = font
-        self.fontsize = fontsize
-        self.number_of_horizontal_boxes = number_of_horizontal_boxes
-        self.number_of_vertical_boxes = number_of_vertical_boxes
+        self.size = size
+        self.horizontal_boxes = horizontal_boxes
+        self.vertical_boxes = vertical_boxes
         self.margin = margin
         self.save_to = save_to
