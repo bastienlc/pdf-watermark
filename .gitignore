@@ -1,2 +1,6 @@
 **/__pycache__/**
 .vscode/**
+venv/**
+build/**
+dist/**
+pdf_watermark.egg-info/**
