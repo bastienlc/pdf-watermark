@@ -7,61 +7,61 @@ from app.utils import add_watermark_from_inputs
 @click.argument(
     "file",
 )
-@click.argument("text")
+@click.argument("watermark")
 @click.option(
     "-c",
     "--color",
     type=str,
-    help="Hexadecimal color, e.g. #000000.",
+    help="Text color in hexadecimal format, e.g. #000000.",
     default="#000000",
 )
 @click.option(
     "-o",
     "--opacity",
     type=float,
-    help="Opacity between 0 (invisible) and 1 (no transparency).",
+    help="Watermark opacity between 0 (invisible) and 1 (no transparency).",
     default=0.1,
 )
 @click.option(
     "-a",
     "--angle",
     type=float,
-    help="Inclination of the text in degrees.",
+    help="Watermark inclination in degrees.",
     default=45,
 )
 @click.option(
     "-f",
     "--font",
     type=str,
-    help="Font to use. Supported fonts are those supported by reportlab.",
+    help="Text font to use. Supported fonts are those supported by reportlab.",
     default="Helvetica",
 )
 @click.option(
     "-s",
     "--size",
     type=int,
-    help="Font size.",
+    help="Text font size.",
     default=12,
 )
 @click.option(
     "-h",
     "--horizontal-boxes",
     type=int,
-    help="Number of times the text is repeated in the horizontal direction.",
+    help="Number of repetitions of the watermark along the horizontal direction.",
     default=3,
 )
 @click.option(
     "-v",
     "--vertical-boxes",
     type=int,
-    help="Number of times the text is repeated in the vertical direction.",
+    help="Number of repetitions of the watermark along the vertical direction.",
     default=6,
 )
 @click.option(
     "-m",
     "--margin",
     type=bool,
-    help="Wether to leave a margin around the page or not. When False (default), the text will be cut on the PDF edges.",
+    help="Wether to leave a margin around the page or not. When False (default), the watermark will be cut on the PDF edges.",
     default=False,
 )
 @click.option(
@@ -72,7 +72,7 @@ from app.utils import add_watermark_from_inputs
 )
 def cli(
     file,
-    text,
+    watermark,
     color,
     opacity,
     angle,
@@ -84,12 +84,14 @@ def cli(
     save,
 ):
     """
-    Add a watermark TEXT to one or more PDF files referenced by FILE. FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
+    Add a WATERMARK to one or more PDF files referenced by FILE.
+    WATERMARK can be either a string or a path to an image file.
+    FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
     add_watermark_from_inputs(
         UserInputs(
             file,
-            text=text,
+            watermark=watermark,
             color=color,
             opacity=opacity,
             angle=angle,
