@@ -1,10 +1,12 @@
 import click
-from app.inputs import UserInputs
-from app.utils import add_watermark_to_pdf
+from app.objects import UserInputs
+from app.utils import add_watermark_from_inputs
 
 
 @click.command()
-@click.argument("file")
+@click.argument(
+    "file",
+)
 @click.argument("text")
 @click.option(
     "-c",
@@ -66,7 +68,7 @@ from app.utils import add_watermark_to_pdf
     "-r",
     "--save",
     type=str,
-    help="File to save result to. By default, the input file is used.",
+    help="File or folder to save results to. By default, the input files are overwritten.",
 )
 def cli(
     file,
@@ -81,7 +83,10 @@ def cli(
     margin,
     save,
 ):
-    add_watermark_to_pdf(
+    """
+    Add a watermark TEXT to one or more PDF files referenced by FILE. FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
+    """
+    add_watermark_from_inputs(
         UserInputs(
             file,
             text=text,
