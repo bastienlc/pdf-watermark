@@ -42,7 +42,10 @@ class FilesOptions:
                 raise ValueError(
                     "Output must be a directory when input is a directory."
                 )
-        elif not os.path.isfile(input) or not input.endswith(".pdf"):
+        elif os.path.isfile(input) and input.endswith(".pdf"):
+            if output is not None and not output.endswith(".pdf"):
+                raise ValueError("Output must be a pdf file when input is a pdf file.")
+        else:
             raise ValueError("Input must be a pdf file or a directory.")
 
         if output is None:
