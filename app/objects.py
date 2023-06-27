@@ -1,12 +1,13 @@
 from typing import Union
 from reportlab.lib.colors import HexColor
 import os
+from reportlab.lib.utils import ImageReader
 
 
 class DrawingOptions:
     def __init__(
         self,
-        text: str,
+        watermark: str,
         color: str = "#000000",
         opacity=0.1,
         angle: float = 45,
@@ -16,7 +17,17 @@ class DrawingOptions:
         vertical_boxes: int = 6,
         margin: bool = False,
     ) -> None:
-        self.text = text
+        self.image = None
+        self.text = None
+
+        potential_image_path = os.path.join(os.getcwd(), watermark)
+        if watermark.endswith(
+            (".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG")
+        ) and os.path.isfile(potential_image_path):
+            self.image = ImageReader(watermark)
+        else:
+            self.text = watermark
+
         self.color = HexColor(color)
         self.opacity = opacity
         self.angle = angle
@@ -95,7 +106,7 @@ class UserInputs:
     def __init__(
         self,
         file: str,
-        text: str,
+        watermark: str,
         color: str = "#000000",
         opacity=0.1,
         angle: float = 45,
@@ -108,7 +119,7 @@ class UserInputs:
     ) -> None:
         self.files_options = FilesOptions(file, save_to)
         self.drawing_options = DrawingOptions(
-            text=text,
+            watermark=watermark,
             color=color,
             opacity=opacity,
             angle=angle,

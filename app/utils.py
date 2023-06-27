@@ -22,6 +22,12 @@ def create_watermark_pdf(
         ]
     )
 
+    def change_base(x, y):
+        # Since we rotated the original coordinates system, use the inverse of the rotation matrix
+        # (which is the transposed matrix) to get the coordinates we have to draw at
+        new_coordinates = np.transpose(rotation_matrix) @ np.array([[x], [y]])
+        return new_coordinates[0, 0], new_coordinates[1, 0]
+
     watermark.setFillColor(drawing_options.color, alpha=drawing_options.opacity)
     watermark.setFont(drawing_options.font, drawing_options.size)
     watermark.rotate(drawing_options.angle)
@@ -41,17 +47,40 @@ def create_watermark_pdf(
                 x_base -= horizontal_box_spacing / 2
                 y_base -= vertical_box_spacing / 2
 
-            # Since we rotated the original coordinates system, use the inverse of the rotation matrix
-            # (which is the transposed matrix) to get the coordinates we have to draw at
-            new_coordinates = np.transpose(rotation_matrix) @ np.array(
-                [[x_base], [y_base]]
-            )
+            if drawing_options.text is not None:
+                x_prime, y_prime = change_base(x_base, y_base)
+                watermark.drawCentredString(
+                    x_prime,
+                    y_prime,
+                    drawing_options.text,
+                )
 
-            watermark.drawCentredString(
-                new_coordinates[0, 0],
-                new_coordinates[1, 0],
-                drawing_options.text,
-            )
+            if drawing_options.image is not None:
+                # if the image is too big, scale it down to fit in the box
+                width, height = drawing_options.image.getSize()
+                if width > horizontal_box_spacing:
+                    change_ratio = horizontal_box_spacing / width
+                    width = horizontal_box_spacing
+                    height *= change_ratio
+                if height > vertical_box_spacing:
+                    change_ratio = vertical_box_spacing / height
+                    height = vertical_box_spacing
+                    width *= change_ratio
+
+                # drawImage draws from the bottom left corner, so we have to adjust the coordinates
+                x_base -= width / 2
+                y_base -= height / 2
+
+                x_prime, y_prime = change_base(x_base, y_base)
+
+                watermark.drawImage(
+                    drawing_options.image,
+                    x_prime,
+                    y_prime,
+                    width=width,
+                    height=height,
+                    mask="auto",
+                )
 
     watermark.save()
 
