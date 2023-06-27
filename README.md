@@ -32,8 +32,11 @@ pip install pdf-watermark
 ### Usage
 
 ```
-watermark --help
 Usage: watermark [OPTIONS] FILE TEXT
+
+  Add a watermark TEXT to one or more PDF files referenced by FILE. FILE can
+  be a single file or a directory, in which case all PDF files in the
+  directory will be watermarked.
 
 Options:
   -c, --color TEXT                Hexadecimal color, e.g. #000000.
@@ -50,8 +53,8 @@ Options:
   -m, --margin BOOLEAN            Wether to leave a margin around the page or
                                   not. When False (default), the text will be
                                   cut on the PDF edges.
-  -r, --save TEXT                 File to save result to. By default, the
-                                  input file is used.
+  -r, --save TEXT                 File or folder to save results to. By
+                                  default, the input files are overwritten.
   --help                          Show this message and exit.
 ```
 
