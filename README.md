@@ -6,6 +6,15 @@ A python CLI tool to add watermarks to a PDF.
 
 There are multiple similar tools out there but I couldn't find one that really suited my needs. This project also serves as an excuse to play with building and distributing a python CLI tool.
 
+With this tool you can add a watermark to a PDF file. The watermark is repeated multiple times on each page, and can be customized.
+
+Below this is an example of a PDF before and after using this tool.
+
+<p align="middle">
+  <img src="images/before.png" width="40%" />
+  <img src="images/after.png" width="40%" />
+</p>
+
 ## Getting Started
 
 ### Dependencies
