@@ -8,15 +8,15 @@ class DrawingOptions:
     def __init__(
         self,
         watermark: str,
-        color: str = "#000000",
-        opacity=0.1,
-        angle: float = 45,
-        font: str = "Helvetica",
-        size: int = 12,
-        horizontal_boxes: int = 3,
-        vertical_boxes: int = 6,
-        scale: float = 1,
-        margin: bool = False,
+        opacity,
+        angle: float,
+        horizontal_boxes: int,
+        vertical_boxes: int,
+        margin: bool,
+        text_color: str,
+        text_font: str,
+        text_size: int,
+        image_scale: float,
     ) -> None:
         self.image = None
         self.text = None
@@ -29,15 +29,15 @@ class DrawingOptions:
         else:
             self.text = watermark
 
-        self.color = HexColor(color)
         self.opacity = opacity
         self.angle = angle
-        self.font = font
-        self.size = size
         self.horizontal_boxes = horizontal_boxes
         self.vertical_boxes = vertical_boxes
-        self.scale = scale
         self.margin = margin
+        self.text_color = HexColor(text_color)
+        self.text_font = text_font
+        self.text_size = text_size
+        self.image_scale = image_scale
 
 
 class FilesOptions:
@@ -109,27 +109,27 @@ class UserInputs:
         self,
         file: str,
         watermark: str,
-        color: str = "#000000",
+        save: Union[None, str] = None,
         opacity=0.1,
         angle: float = 45,
-        font: str = "Helvetica",
-        size: int = 12,
         horizontal_boxes: int = 3,
         vertical_boxes: int = 6,
         margin: bool = False,
-        scale: float = 1,
-        save_to: Union[None, str] = None,
+        text_color: str = "#000000",
+        text_font: str = "Helvetica",
+        text_size: int = 12,
+        image_scale: float = 1,
     ) -> None:
-        self.files_options = FilesOptions(file, save_to)
+        self.files_options = FilesOptions(file, save)
         self.drawing_options = DrawingOptions(
             watermark=watermark,
-            color=color,
             opacity=opacity,
             angle=angle,
-            font=font,
-            size=size,
             horizontal_boxes=horizontal_boxes,
             vertical_boxes=vertical_boxes,
-            scale=scale,
             margin=margin,
+            text_color=text_color,
+            text_font=text_font,
+            text_size=text_size,
+            image_scale=image_scale,
         )

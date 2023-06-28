@@ -51,8 +51,8 @@ def create_watermark_pdf(
         ]
     )
 
-    watermark.setFillColor(drawing_options.color, alpha=drawing_options.opacity)
-    watermark.setFont(drawing_options.font, drawing_options.size)
+    watermark.setFillColor(drawing_options.text_color, alpha=drawing_options.opacity)
+    watermark.setFont(drawing_options.text_font, drawing_options.text_size)
     watermark.rotate(drawing_options.angle)
 
     if drawing_options.margin:
@@ -91,8 +91,8 @@ def create_watermark_pdf(
                     image_height = vertical_box_spacing
                     image_width *= change_ratio
 
-                image_width *= drawing_options.scale
-                image_height *= drawing_options.scale
+                image_width *= drawing_options.image_scale
+                image_height *= drawing_options.image_scale
 
                 draw_centered_image(
                     watermark,

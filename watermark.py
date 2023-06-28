@@ -9,11 +9,10 @@ from app.utils import add_watermark_from_inputs
 )
 @click.argument("watermark")
 @click.option(
-    "-c",
-    "--color",
+    "-s",
+    "--save",
     type=str,
-    help="Text color in hexadecimal format, e.g. #000000.",
-    default="#000000",
+    help="File or folder to save results to. By default, the input files are overwritten.",
 )
 @click.option(
     "-o",
@@ -28,20 +27,6 @@ from app.utils import add_watermark_from_inputs
     type=float,
     help="Watermark inclination in degrees.",
     default=45,
-)
-@click.option(
-    "-f",
-    "--font",
-    type=str,
-    help="Text font to use. Supported fonts are those supported by reportlab.",
-    default="Helvetica",
-)
-@click.option(
-    "-s",
-    "--size",
-    type=int,
-    help="Text font size.",
-    default=12,
 )
 @click.option(
     "-h",
@@ -65,30 +50,46 @@ from app.utils import add_watermark_from_inputs
     default=False,
 )
 @click.option(
-    "--scale",
-    type=float,
-    help="Scale factor for the watermark image. Note that before this factor is applied, the image is already scaled down to fit in the boxes.",
-    default=1,
+    "-tc",
+    "--text-color",
+    type=str,
+    help="Text color in hexadecimal format, e.g. #000000.",
+    default="#000000",
 )
 @click.option(
-    "-r",
-    "--save",
+    "-tf",
+    "--text-font",
     type=str,
-    help="File or folder to save results to. By default, the input files are overwritten.",
+    help="Text font to use. Supported fonts are those supported by reportlab.",
+    default="Helvetica",
+)
+@click.option(
+    "-ts",
+    "--text-size",
+    type=int,
+    help="Text font size.",
+    default=12,
+)
+@click.option(
+    "-is",
+    "--image-scale",
+    type=float,
+    help="Scale factor for the image. Note that before this factor is applied, the image is already scaled down to fit in the boxes.",
+    default=1,
 )
 def cli(
     file,
     watermark,
-    color,
+    save,
     opacity,
     angle,
-    font,
-    size,
     horizontal_boxes,
     vertical_boxes,
     margin,
-    scale,
-    save,
+    text_color,
+    text_font,
+    text_size,
+    image_scale,
 ):
     """
     Add a WATERMARK to one or more PDF files referenced by FILE.
@@ -97,17 +98,17 @@ def cli(
     """
     add_watermark_from_inputs(
         UserInputs(
-            file,
+            file=file,
             watermark=watermark,
-            color=color,
+            save=save,
             opacity=opacity,
             angle=angle,
-            font=font,
-            size=size,
             horizontal_boxes=horizontal_boxes,
             vertical_boxes=vertical_boxes,
             margin=margin,
-            scale=scale,
-            save_to=save,
+            text_color=text_color,
+            text_font=text_font,
+            text_size=text_size,
+            image_scale=image_scale,
         )
     )
