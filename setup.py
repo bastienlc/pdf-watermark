@@ -6,14 +6,14 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = fh.read()
 setup(
     name="pdf-watermark",
-    version="1.0.0",
+    version="1.0.1",
     author="Bastien Le Chenadec",
     author_email="bastien.lechenadec@gmail.com",
     license="MIT License",
     description="A python CLI tool to add watermarks to a PDF",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/bastienlc/watermark",
+    url="https://github.com/bastienlc/pdf-watermark",
     py_modules=["watermark"],
     packages=find_packages(),
     install_requires=[requirements],
