@@ -11,9 +11,9 @@ With this tool you can add a watermark to a PDF file. The watermark can either b
 Below this is an example of a PDF before using this tool, after using this tool with a text watermark, and after using this tool with an image watermark.
 
 <p align="middle">
-  <img src="images/before.png" width="29%" />
-  <img src="images/text.png" width="29%" />
-  <img src="images/image.png" width="29%" />
+  <img src="https://raw.githubusercontent.com/bastienlc/pdf-watermark/master/images/before.png" width="29%" />
+  <img src="https://raw.githubusercontent.com/bastienlc/pdf-watermark/master/images/text.png" width="29%" />
+  <img src="https://raw.githubusercontent.com/bastienlc/pdf-watermark/master/images/image.png" width="29%" />
 </p>
 
 You can control the opacity of the watermark and its inclination. You can also control the number of repetitions along the horizontal and vertical directions, as well as wether to leave a margin around the page or not.
