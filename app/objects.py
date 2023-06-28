@@ -15,6 +15,7 @@ class DrawingOptions:
         size: int = 12,
         horizontal_boxes: int = 3,
         vertical_boxes: int = 6,
+        scale: float = 1,
         margin: bool = False,
     ) -> None:
         self.image = None
@@ -35,6 +36,7 @@ class DrawingOptions:
         self.size = size
         self.horizontal_boxes = horizontal_boxes
         self.vertical_boxes = vertical_boxes
+        self.scale = scale
         self.margin = margin
 
 
@@ -115,6 +117,7 @@ class UserInputs:
         horizontal_boxes: int = 3,
         vertical_boxes: int = 6,
         margin: bool = False,
+        scale: float = 1,
         save_to: Union[None, str] = None,
     ) -> None:
         self.files_options = FilesOptions(file, save_to)
@@ -127,5 +130,6 @@ class UserInputs:
             size=size,
             horizontal_boxes=horizontal_boxes,
             vertical_boxes=vertical_boxes,
+            scale=scale,
             margin=margin,
         )
