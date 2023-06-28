@@ -1,9 +1,38 @@
+from typing import Tuple
 from reportlab.pdfgen import canvas
 from math import cos, sin, pi
 import numpy as np
 from app.objects import DrawingOptions, UserInputs
 import pypdf
 from tempfile import NamedTemporaryFile
+from reportlab.lib.utils import ImageReader
+
+
+def draw_centered_image(
+    canvas: canvas.Canvas,
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    image: ImageReader,
+):
+    bottom_left_x = x - width / 2
+    bottom_left_y = y - height / 2
+    canvas.drawImage(
+        image,
+        bottom_left_x,
+        bottom_left_y,
+        width=width,
+        height=height,
+        mask="auto",
+    )
+
+
+def change_base(x: float, y: float, rotation_matrix: np.ndarray) -> Tuple[float, float]:
+    # Since we rotated the original coordinates system, use the inverse of the rotation matrix
+    # (which is the transposed matrix) to get the coordinates we have to draw at
+    new_coordinates = np.transpose(rotation_matrix) @ np.array([[x], [y]])
+    return new_coordinates[0, 0], new_coordinates[1, 0]
 
 
 def create_watermark_pdf(
@@ -21,12 +50,6 @@ def create_watermark_pdf(
             [sin(rotation_angle_rad), cos(rotation_angle_rad)],
         ]
     )
-
-    def change_base(x, y):
-        # Since we rotated the original coordinates system, use the inverse of the rotation matrix
-        # (which is the transposed matrix) to get the coordinates we have to draw at
-        new_coordinates = np.transpose(rotation_matrix) @ np.array([[x], [y]])
-        return new_coordinates[0, 0], new_coordinates[1, 0]
 
     watermark.setFillColor(drawing_options.color, alpha=drawing_options.opacity)
     watermark.setFont(drawing_options.font, drawing_options.size)
@@ -47,8 +70,9 @@ def create_watermark_pdf(
                 x_base -= horizontal_box_spacing / 2
                 y_base -= vertical_box_spacing / 2
 
+            x_prime, y_prime = change_base(x_base, y_base, rotation_matrix)
+
             if drawing_options.text is not None:
-                x_prime, y_prime = change_base(x_base, y_base)
                 watermark.drawCentredString(
                     x_prime,
                     y_prime,
@@ -57,29 +81,26 @@ def create_watermark_pdf(
 
             if drawing_options.image is not None:
                 # if the image is too big, scale it down to fit in the box
-                width, height = drawing_options.image.getSize()
-                if width > horizontal_box_spacing:
-                    change_ratio = horizontal_box_spacing / width
-                    width = horizontal_box_spacing
-                    height *= change_ratio
-                if height > vertical_box_spacing:
-                    change_ratio = vertical_box_spacing / height
-                    height = vertical_box_spacing
-                    width *= change_ratio
+                image_width, image_height = drawing_options.image.getSize()
+                if image_width > horizontal_box_spacing:
+                    change_ratio = horizontal_box_spacing / image_width
+                    image_width = horizontal_box_spacing
+                    image_height *= change_ratio
+                if image_height > vertical_box_spacing:
+                    change_ratio = vertical_box_spacing / image_height
+                    image_height = vertical_box_spacing
+                    image_width *= change_ratio
 
-                # drawImage draws from the bottom left corner, so we have to adjust the coordinates
-                x_base -= width / 2
-                y_base -= height / 2
+                image_width *= drawing_options.scale
+                image_height *= drawing_options.scale
 
-                x_prime, y_prime = change_base(x_base, y_base)
-
-                watermark.drawImage(
-                    drawing_options.image,
+                draw_centered_image(
+                    watermark,
                     x_prime,
                     y_prime,
-                    width=width,
-                    height=height,
-                    mask="auto",
+                    image_width,
+                    image_height,
+                    drawing_options.image,
                 )
 
     watermark.save()

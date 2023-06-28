@@ -65,6 +65,12 @@ from app.utils import add_watermark_from_inputs
     default=False,
 )
 @click.option(
+    "--scale",
+    type=float,
+    help="Scale factor for the watermark image. Note that before this factor is applied, the image is already scaled down to fit in the boxes.",
+    default=1,
+)
+@click.option(
     "-r",
     "--save",
     type=str,
@@ -81,6 +87,7 @@ def cli(
     horizontal_boxes,
     vertical_boxes,
     margin,
+    scale,
     save,
 ):
     """
@@ -100,6 +107,7 @@ def cli(
             horizontal_boxes=horizontal_boxes,
             vertical_boxes=vertical_boxes,
             margin=margin,
+            scale=scale,
             save_to=save,
         )
     )
