@@ -6,7 +6,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = fh.read()
 setup(
     name="pdf-watermark",
-    version="0.0.1",
+    version="1.0.0",
     author="Bastien Le Chenadec",
     author_email="bastien.lechenadec@gmail.com",
     license="MIT License",
