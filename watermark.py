@@ -65,6 +65,53 @@ def generic_watermark_parameters(f):
 @click.group()
 def cli():
     """
+    Add a watermark to one or more PDF files.
+
+    The watermark can be repeated in a grid pattern using the grid command, or inserted at a specific position using the insert command.
+    """
+    pass
+
+
+@cli.command()
+@click.option(
+    "-y",
+    "--y",
+    type=float,
+    help="Position of the watermark with respect to the vertical direction. Must be between 0 and 1.",
+    default=0.9,
+)
+@click.option(
+    "-x",
+    "--x",
+    type=float,
+    help="Position of the watermark with respect to the horizontal direction. Must be between 0 and 1.",
+    default=0.1,
+)
+@click.option(
+    "-al",
+    "--alignment",
+    type=str,
+    help="Alignment of the watermark with respect to the y and x coordinates.",
+    default="center-right",
+)
+@generic_watermark_parameters
+def insert(
+    file,
+    watermark,
+    save,
+    opacity,
+    angle,
+    text_color,
+    text_font,
+    text_size,
+    image_scale,
+    y,
+    x,
+    alignment,
+):
+    """
+    Add a watermark at a specific position.
+
     Add a WATERMARK to one or more PDF files referenced by FILE.
     WATERMARK can be either a string or a path to an image file.
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
@@ -109,6 +156,13 @@ def grid(
     vertical_boxes,
     margin,
 ):
+    """
+    Add a watermark in a grid pattern.
+
+    Add a WATERMARK to one or more PDF files referenced by FILE.
+    WATERMARK can be either a string or a path to an image file.
+    FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
+    """
     add_watermark_from_inputs(
         UserInputs(
             file=file,
