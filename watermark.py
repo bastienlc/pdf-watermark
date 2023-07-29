@@ -1,5 +1,5 @@
 import click
-from app.objects import GenericInputs, GridInputs
+from app.objects import GenericInputs, GridInputs, InsertInputs
 from app.utils import add_watermark_from_inputs
 from functools import wraps
 
@@ -78,21 +78,21 @@ def cli():
     "--y",
     type=float,
     help="Position of the watermark with respect to the vertical direction. Must be between 0 and 1.",
-    default=0.9,
+    default=0.5,
 )
 @click.option(
     "-x",
     "--x",
     type=float,
     help="Position of the watermark with respect to the horizontal direction. Must be between 0 and 1.",
-    default=0.1,
+    default=0.5,
 )
 @click.option(
-    "-al",
-    "--alignment",
+    "-ha",
+    "--horizontal-alignment",
     type=str,
-    help="Alignment of the watermark with respect to the y and x coordinates.",
-    default="center-right",
+    help="Alignment of the watermark with respect to the horizontal direction. Can be one of 'left', 'right' and 'center'.",
+    default="center",
 )
 @generic_watermark_parameters
 def insert(
@@ -107,7 +107,7 @@ def insert(
     image_scale,
     y,
     x,
-    alignment,
+    horizontal_alignment,
 ):
     """
     Add a watermark at a specific position.
@@ -116,7 +116,24 @@ def insert(
     WATERMARK can be either a string or a path to an image file.
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
-    pass
+    add_watermark_from_inputs(
+        GenericInputs(
+            file=file,
+            watermark=watermark,
+            save=save,
+            opacity=opacity,
+            angle=angle,
+            text_color=text_color,
+            text_font=text_font,
+            text_size=text_size,
+            image_scale=image_scale,
+        ),
+        InsertInputs(
+            y=y,
+            x=x,
+            horizontal_alignment=horizontal_alignment,
+        ),
+    )
 
 
 @cli.command()

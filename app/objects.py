@@ -137,15 +137,9 @@ class GridInputs:
 
 
 class Alignments(Enum):
-    TOP_LEFT = "top-left"
-    TOP_CENTER = "top-center"
-    TOP_RIGHT = "top-right"
-    CENTER_LEFT = "center-left"
-    CENTER_CENTER = "center-center"
-    CENTER_RIGHT = "center-right"
-    BOTTOM_LEFT = "bottom-left"
-    BOTTOM_CENTER = "bottom-center"
-    BOTTOM_RIGHT = "bottom-right"
+    LEFT = "left"
+    RIGHT = "right"
+    CENTER = "center"
 
     @classmethod
     def has_value(cls, value):
@@ -157,12 +151,12 @@ class InsertInputs:
         self,
         y: float,
         x: float,
-        alignment: List[Alignments],
+        horizontal_alignment: List[Alignments],
     ) -> None:
-        if not Alignments.has_value(alignment):
+        if not Alignments.has_value(horizontal_alignment):
             raise Exception(
-                "Invalid argument. Alignment must be two words separated by a dash. For example: top-left, bottom-right, or center-center."
+                "Invalid argument. Horizontal alignment must be either left, right or center."
             )
         self.y = y
         self.x = x
-        self.alignment = alignment
+        self.horizontal_alignment = horizontal_alignment
