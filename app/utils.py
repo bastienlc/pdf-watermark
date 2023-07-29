@@ -1,8 +1,8 @@
-from typing import Tuple
+from typing import Tuple, Union
 from reportlab.pdfgen import canvas
 from math import cos, sin, pi
 import numpy as np
-from app.objects import DrawingOptions, UserInputs
+from app.objects import DrawingOptions, GenericInputs, GridInputs, InsertInputs
 import pypdf
 from tempfile import NamedTemporaryFile
 from reportlab.lib.utils import ImageReader
@@ -36,12 +36,19 @@ def change_base(x: float, y: float, rotation_matrix: np.ndarray) -> Tuple[float,
 
 
 def create_watermark_pdf(
-    file_name: str, width: float, height: float, drawing_options: DrawingOptions
+    file_name: str,
+    width: float,
+    height: float,
+    drawing_options: DrawingOptions,
+    specific_inputs: Union[GridInputs, InsertInputs],
 ):
+    if isinstance(specific_inputs, InsertInputs):
+        raise NotImplementedError("Inserting watermarks is not implemented yet")
+
     watermark = canvas.Canvas(file_name, pagesize=(width, height))
 
-    horizontal_box_spacing = width / drawing_options.horizontal_boxes
-    vertical_box_spacing = height / drawing_options.vertical_boxes
+    horizontal_box_spacing = width / specific_inputs.horizontal_boxes
+    vertical_box_spacing = height / specific_inputs.vertical_boxes
 
     rotation_angle_rad = drawing_options.angle * pi / 180
     rotation_matrix = np.array(
@@ -55,18 +62,18 @@ def create_watermark_pdf(
     watermark.setFont(drawing_options.text_font, drawing_options.text_size)
     watermark.rotate(drawing_options.angle)
 
-    if drawing_options.margin:
+    if specific_inputs.margin:
         start_index = 1
     else:
         start_index = 0
 
-    for x_index in range(start_index, drawing_options.horizontal_boxes + 1):
-        for y_index in range(start_index, drawing_options.vertical_boxes + 1):
+    for x_index in range(start_index, specific_inputs.horizontal_boxes + 1):
+        for y_index in range(start_index, specific_inputs.vertical_boxes + 1):
             # Coordinates to draw at in original coordinates system
             x_base = x_index * horizontal_box_spacing
             y_base = y_index * vertical_box_spacing
 
-            if drawing_options.margin:
+            if specific_inputs.margin:
                 x_base -= horizontal_box_spacing / 2
                 y_base -= vertical_box_spacing / 2
 
@@ -106,7 +113,12 @@ def create_watermark_pdf(
     watermark.save()
 
 
-def add_watermark_to_pdf(input: str, output: str, drawing_options: DrawingOptions):
+def add_watermark_to_pdf(
+    input: str,
+    output: str,
+    drawing_options: DrawingOptions,
+    specific_inputs: Union[GridInputs, InsertInputs],
+):
     pdf_to_transform = pypdf.PdfReader(input)
     pdf_box = pdf_to_transform.pages[0].mediabox
     page_width = pdf_box.width
@@ -119,6 +131,7 @@ def add_watermark_to_pdf(input: str, output: str, drawing_options: DrawingOption
             page_width,
             page_height,
             drawing_options,
+            specific_inputs,
         )
 
         watermark_pdf = pypdf.PdfReader(temporary_file.name)
@@ -132,6 +145,10 @@ def add_watermark_to_pdf(input: str, output: str, drawing_options: DrawingOption
         pdf_writer.write(f)
 
 
-def add_watermark_from_inputs(inputs: UserInputs):
-    for input_file, output_file in inputs.files_options:
-        add_watermark_to_pdf(input_file, output_file, inputs.drawing_options)
+def add_watermark_from_inputs(
+    generic_inputs: GenericInputs, specific_inputs: Union[GridInputs, InsertInputs]
+):
+    for input_file, output_file in generic_inputs.files_options:
+        add_watermark_to_pdf(
+            input_file, output_file, generic_inputs.drawing_options, specific_inputs
+        )

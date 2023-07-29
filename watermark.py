@@ -1,5 +1,5 @@
 import click
-from app.objects import UserInputs
+from app.objects import GenericInputs, GridInputs
 from app.utils import add_watermark_from_inputs
 from functools import wraps
 
@@ -164,18 +164,20 @@ def grid(
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
     add_watermark_from_inputs(
-        UserInputs(
+        GenericInputs(
             file=file,
             watermark=watermark,
             save=save,
             opacity=opacity,
             angle=angle,
-            horizontal_boxes=horizontal_boxes,
-            vertical_boxes=vertical_boxes,
-            margin=margin,
             text_color=text_color,
             text_font=text_font,
             text_size=text_size,
             image_scale=image_scale,
-        )
+        ),
+        GridInputs(
+            horizontal_boxes=horizontal_boxes,
+            vertical_boxes=vertical_boxes,
+            margin=margin,
+        ),
     )

@@ -1,4 +1,5 @@
-from typing import Union
+from enum import Enum
+from typing import List, Union
 from reportlab.lib.colors import HexColor
 import os
 from reportlab.lib.utils import ImageReader
@@ -10,9 +11,6 @@ class DrawingOptions:
         watermark: str,
         opacity,
         angle: float,
-        horizontal_boxes: int,
-        vertical_boxes: int,
-        margin: bool,
         text_color: str,
         text_font: str,
         text_size: int,
@@ -31,9 +29,6 @@ class DrawingOptions:
 
         self.opacity = opacity
         self.angle = angle
-        self.horizontal_boxes = horizontal_boxes
-        self.vertical_boxes = vertical_boxes
-        self.margin = margin
         self.text_color = HexColor(text_color)
         self.text_font = text_font
         self.text_size = text_size
@@ -44,7 +39,7 @@ class FilesOptions:
     def __init__(
         self,
         input: str,
-        output: Union[None, str] = None,
+        output: Union[None, str],
     ) -> None:
         input = os.path.join(os.getcwd(), input)
 
@@ -104,32 +99,70 @@ class FilesOptions:
         return next(zip(self.input_files, self.output_files))
 
 
-class UserInputs:
+class GenericInputs:
     def __init__(
         self,
         file: str,
         watermark: str,
-        save: Union[None, str] = None,
-        opacity=0.1,
-        angle: float = 45,
-        horizontal_boxes: int = 3,
-        vertical_boxes: int = 6,
-        margin: bool = False,
-        text_color: str = "#000000",
-        text_font: str = "Helvetica",
-        text_size: int = 12,
-        image_scale: float = 1,
+        save: Union[None, str],
+        opacity: float,
+        angle: float,
+        text_color: str,
+        text_font: str,
+        text_size: int,
+        image_scale: float,
     ) -> None:
         self.files_options = FilesOptions(file, save)
         self.drawing_options = DrawingOptions(
             watermark=watermark,
             opacity=opacity,
             angle=angle,
-            horizontal_boxes=horizontal_boxes,
-            vertical_boxes=vertical_boxes,
-            margin=margin,
             text_color=text_color,
             text_font=text_font,
             text_size=text_size,
             image_scale=image_scale,
         )
+
+
+class GridInputs:
+    def __init__(
+        self,
+        horizontal_boxes: int,
+        vertical_boxes: int,
+        margin: bool,
+    ) -> None:
+        self.horizontal_boxes = horizontal_boxes
+        self.vertical_boxes = vertical_boxes
+        self.margin = margin
+
+
+class Alignments(Enum):
+    TOP_LEFT = "top-left"
+    TOP_CENTER = "top-center"
+    TOP_RIGHT = "top-right"
+    CENTER_LEFT = "center-left"
+    CENTER_CENTER = "center-center"
+    CENTER_RIGHT = "center-right"
+    BOTTOM_LEFT = "bottom-left"
+    BOTTOM_CENTER = "bottom-center"
+    BOTTOM_RIGHT = "bottom-right"
+
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_
+
+
+class InsertInputs:
+    def __init__(
+        self,
+        y: float,
+        x: float,
+        alignment: List[Alignments],
+    ) -> None:
+        if not Alignments.has_value(alignment):
+            raise Exception(
+                "Invalid argument. Alignment must be two words separated by a dash. For example: top-left, bottom-right, or center-center."
+            )
+        self.y = y
+        self.x = x
+        self.alignment = alignment
