@@ -145,6 +145,9 @@ Options:
     * Add image watermark support.
     * Add CLI.
     * Add complex directories support.
+* 2.0.0
+    * Move tool to subcommand **grid**.
+    * Add **insert** command.
 
 ## License
 
