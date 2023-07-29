@@ -9,7 +9,7 @@ from app.options import (
     InsertOptions,
 )
 
-from app.utils import draw_centered_image, change_base
+from app.utils import draw_centered_image, change_base, fit_image
 
 
 def draw_one_watermark(
@@ -18,8 +18,8 @@ def draw_one_watermark(
     y: float,
     rotation_matrix: np.ndarray,
     drawing_options: DrawingOptions,
-    max_image_width: float,
-    max_image_height: float,
+    image_width: float,
+    image_height: float,
 ):
     x_prime, y_prime = change_base(x, y, rotation_matrix)
 
@@ -31,20 +31,6 @@ def draw_one_watermark(
         )
 
     if drawing_options.image is not None:
-        # if the image is too big, scale it down to fit in the box
-        image_width, image_height = drawing_options.image.getSize()
-        if image_width > max_image_width:
-            change_ratio = max_image_width / image_width
-            image_width = max_image_width
-            image_height *= change_ratio
-        if image_height > max_image_height:
-            change_ratio = max_image_height / image_height
-            image_height = max_image_height
-            image_width *= change_ratio
-
-        image_width *= drawing_options.image_scale
-        image_height *= drawing_options.image_scale
-
         draw_centered_image(
             watermark,
             x_prime,
@@ -63,15 +49,53 @@ def draw_insert_watermark(
     height: float,
     rotation_matrix: np.ndarray,
 ):
-    string_width = watermark.stringWidth(
-        drawing_options.text, drawing_options.text_font, drawing_options.text_size
+    max_image_height = min(
+        2 * specific_options.y * height, 2 * (2 * (1 - specific_options.y) * height)
     )
+    image_width, image_height = 0, 0
+
+    if drawing_options.text is not None:
+        watermark_width = watermark.stringWidth(
+            drawing_options.text, drawing_options.text_font, drawing_options.text_size
+        )
+
+    elif drawing_options.image is not None:
+        if specific_options.horizontal_alignment == Alignments.LEFT.value:
+            max_image_width = specific_options.x * width
+
+        elif specific_options.horizontal_alignment == Alignments.RIGHT.value:
+            max_image_width = (1 - specific_options.x) * width
+
+        elif specific_options.horizontal_alignment == Alignments.CENTER.value:
+            max_image_width = min(
+                2 * (1 - specific_options.x) * width, 2 * specific_options.x * width
+            )
+
+        else:
+            raise ValueError(
+                f"Invalid alignment value: '{specific_options.horizontal_alignment}'."
+            )
+
+        # if the image is too big, scale it down to fit in the box
+        image_width, image_height = drawing_options.image.getSize()
+        image_width, image_height = fit_image(
+            image_width,
+            image_height,
+            max_image_width,
+            max_image_height,
+            drawing_options.image_scale,
+        )
+
+        watermark_width = image_width
+
+    else:
+        raise ValueError("No watermark to draw.")
 
     if specific_options.horizontal_alignment == Alignments.LEFT.value:
-        offset = -string_width / 2
+        offset = -watermark_width / 2
 
     elif specific_options.horizontal_alignment == Alignments.RIGHT.value:
-        offset = string_width / 2
+        offset = watermark_width / 2
 
     elif specific_options.horizontal_alignment == Alignments.CENTER.value:
         offset = 0
@@ -87,8 +111,8 @@ def draw_insert_watermark(
         specific_options.y * height,
         rotation_matrix,
         drawing_options,
-        width,
-        height,
+        image_width,
+        image_height,
     )
 
 
@@ -100,6 +124,8 @@ def draw_grid_watermark(
     height: float,
     rotation_matrix: np.ndarray,
 ):
+    image_width, image_height = 0, 0
+
     horizontal_box_spacing = width / specific_options.horizontal_boxes
     vertical_box_spacing = height / specific_options.vertical_boxes
 
@@ -107,6 +133,17 @@ def draw_grid_watermark(
         start_index = 1
     else:
         start_index = 0
+
+    if drawing_options.image is not None:
+        # if the image is too big, scale it down to fit in the box
+        image_width, image_height = drawing_options.image.getSize()
+        image_width, image_height = fit_image(
+            image_width,
+            image_height,
+            horizontal_box_spacing,
+            vertical_box_spacing,
+            drawing_options.image_scale,
+        )
 
     for x_index in range(start_index, specific_options.horizontal_boxes + 1):
         for y_index in range(start_index, specific_options.vertical_boxes + 1):
@@ -124,8 +161,8 @@ def draw_grid_watermark(
                 y_base,
                 rotation_matrix,
                 drawing_options,
-                horizontal_box_spacing,
-                vertical_box_spacing,
+                image_width,
+                image_height,
             )
 
 
