@@ -1,6 +1,11 @@
 import click
-from app.objects import GenericInputs, GridInputs, InsertInputs
-from app.utils import add_watermark_from_inputs
+from app.options import (
+    DrawingOptions,
+    FilesOptions,
+    GridOptions,
+    InsertOptions,
+)
+from app.handler import add_watermark_from_options
 from functools import wraps
 
 
@@ -116,11 +121,10 @@ def insert(
     WATERMARK can be either a string or a path to an image file.
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
-    add_watermark_from_inputs(
-        GenericInputs(
-            file=file,
+    add_watermark_from_options(
+        FilesOptions(input=file, output=save),
+        DrawingOptions(
             watermark=watermark,
-            save=save,
             opacity=opacity,
             angle=angle,
             text_color=text_color,
@@ -128,7 +132,7 @@ def insert(
             text_size=text_size,
             image_scale=image_scale,
         ),
-        InsertInputs(
+        InsertOptions(
             y=y,
             x=x,
             horizontal_alignment=horizontal_alignment,
@@ -180,11 +184,10 @@ def grid(
     WATERMARK can be either a string or a path to an image file.
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
-    add_watermark_from_inputs(
-        GenericInputs(
-            file=file,
+    add_watermark_from_options(
+        FilesOptions(input=file, output=save),
+        DrawingOptions(
             watermark=watermark,
-            save=save,
             opacity=opacity,
             angle=angle,
             text_color=text_color,
@@ -192,7 +195,7 @@ def grid(
             text_size=text_size,
             image_scale=image_scale,
         ),
-        GridInputs(
+        GridOptions(
             horizontal_boxes=horizontal_boxes,
             vertical_boxes=vertical_boxes,
             margin=margin,

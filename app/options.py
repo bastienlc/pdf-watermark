@@ -99,32 +99,7 @@ class FilesOptions:
         return next(zip(self.input_files, self.output_files))
 
 
-class GenericInputs:
-    def __init__(
-        self,
-        file: str,
-        watermark: str,
-        save: Union[None, str],
-        opacity: float,
-        angle: float,
-        text_color: str,
-        text_font: str,
-        text_size: int,
-        image_scale: float,
-    ) -> None:
-        self.files_options = FilesOptions(file, save)
-        self.drawing_options = DrawingOptions(
-            watermark=watermark,
-            opacity=opacity,
-            angle=angle,
-            text_color=text_color,
-            text_font=text_font,
-            text_size=text_size,
-            image_scale=image_scale,
-        )
-
-
-class GridInputs:
+class GridOptions:
     def __init__(
         self,
         horizontal_boxes: int,
@@ -146,7 +121,7 @@ class Alignments(Enum):
         return value in cls._value2member_map_
 
 
-class InsertInputs:
+class InsertOptions:
     def __init__(
         self,
         y: float,
