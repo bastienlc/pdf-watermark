@@ -1,15 +1,11 @@
+from math import cos, pi, sin
 from typing import Union
-from reportlab.pdfgen import canvas
-from math import cos, sin, pi
-import numpy as np
-from app.options import (
-    Alignments,
-    DrawingOptions,
-    GridOptions,
-    InsertOptions,
-)
 
-from app.utils import draw_centered_image, change_base, fit_image
+import numpy as np
+from reportlab.pdfgen import canvas
+
+from app.options import Alignments, DrawingOptions, GridOptions, InsertOptions
+from app.utils import change_base, draw_centered_image, fit_image
 
 
 def draw_one_watermark(

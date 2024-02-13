@@ -1,12 +1,9 @@
-import click
-from app.options import (
-    DrawingOptions,
-    FilesOptions,
-    GridOptions,
-    InsertOptions,
-)
-from app.handler import add_watermark_from_options
 from functools import wraps
+
+import click
+
+from app.handler import add_watermark_from_options
+from app.options import DrawingOptions, FilesOptions, GridOptions, InsertOptions
 
 
 def generic_watermark_parameters(f):

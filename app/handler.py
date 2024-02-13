@@ -1,14 +1,10 @@
-from typing import Union
-from app.options import (
-    DrawingOptions,
-    FilesOptions,
-    GridOptions,
-    InsertOptions,
-)
-import pypdf
 from tempfile import NamedTemporaryFile
+from typing import Union
+
+import pypdf
 
 from app.draw import draw_watermarks
+from app.options import DrawingOptions, FilesOptions, GridOptions, InsertOptions
 
 
 def add_watermark_to_pdf(

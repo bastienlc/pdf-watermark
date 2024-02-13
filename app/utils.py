@@ -1,7 +1,8 @@
 from typing import Tuple
-from reportlab.pdfgen import canvas
+
 import numpy as np
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen import canvas
 
 
 def draw_centered_image(

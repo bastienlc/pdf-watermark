@@ -1,7 +1,8 @@
+import os
 from enum import Enum
 from typing import List, Union
+
 from reportlab.lib.colors import HexColor
-import os
 from reportlab.lib.utils import ImageReader
 
 
