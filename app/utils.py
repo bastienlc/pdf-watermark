@@ -1,6 +1,8 @@
+from io import BytesIO
 from typing import Tuple
 
 import numpy as np
+from pdf2image import convert_from_path
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
@@ -46,3 +48,24 @@ def fit_image(image_width, image_height, max_image_width, max_image_height, scal
     image_height *= scale
 
     return image_width, image_height
+
+
+def convert_content_to_images(
+    file_name: str, page_width: int, page_height: int, dpi: int
+):
+
+    images = convert_from_path(
+        file_name, dpi=dpi, fmt="jpeg", transparent=True, hide_annotations=True
+    )
+    pdf = canvas.Canvas(file_name, pagesize=(page_width, page_height))
+
+    for image in images:
+        compressed = BytesIO()
+        image.save(compressed, format="jpeg", optimize=True, quality=dpi // 10)
+
+        pdf.drawImage(
+            ImageReader(compressed), 0, 0, width=page_width, height=page_height
+        )
+        pdf.showPage()
+
+    pdf.save()

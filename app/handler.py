@@ -5,6 +5,7 @@ import pypdf
 
 from app.draw import draw_watermarks
 from app.options import DrawingOptions, FilesOptions, GridOptions, InsertOptions
+from app.utils import convert_content_to_images
 
 
 def add_watermark_to_pdf(
@@ -37,6 +38,9 @@ def add_watermark_to_pdf(
 
     with open(output, "wb") as f:
         pdf_writer.write(f)
+
+    if drawing_options.save_as_image:
+        convert_content_to_images(output, page_width, page_height, drawing_options.dpi)
 
 
 def add_watermark_from_options(
