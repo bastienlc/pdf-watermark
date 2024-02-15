@@ -96,6 +96,10 @@ Options:
   -is, --image-scale FLOAT        Scale factor for the image. Note that before
                                   this factor is applied, the image is already
                                   scaled down to fit in the boxes.
+  --save-as-image                 Convert each PDF page to an image. This
+                                  makes removing the watermark more difficult
+                                  but also increases the file size.
+  --dpi INTEGER                   DPI to use when saving the PDF as an image.
   --help                          Show this message and exit.
 ```
 
@@ -115,7 +119,7 @@ Options:
                                   the horizontal direction.
   -v, --vertical-boxes INTEGER    Number of repetitions of the watermark along
                                   the vertical direction.
-  -m, --margin BOOLEAN            Wether to leave a margin around the page or
+  -m, --margin                    Wether to leave a margin around the page or
                                   not. When False (default), the watermark
                                   will be cut on the PDF edges.
   -s, --save TEXT                 File or folder to save results to. By
@@ -131,6 +135,10 @@ Options:
   -is, --image-scale FLOAT        Scale factor for the image. Note that before
                                   this factor is applied, the image is already
                                   scaled down to fit in the boxes.
+  --save-as-image                 Convert each PDF page to an image. This
+                                  makes removing the watermark more difficult
+                                  but also increases the file size.
+  --dpi INTEGER                   DPI to use when saving the PDF as an image.
   --help                          Show this message and exit.
 ```
 
