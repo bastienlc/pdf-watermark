@@ -29,6 +29,11 @@ def add_watermark_to_pdf(
             specific_options,
         )
 
+        if drawing_options.unselectable and not drawing_options.save_as_image:
+            convert_content_to_images(
+                temporary_file.name, page_width, page_height, drawing_options.dpi
+            )
+
         watermark_pdf = pypdf.PdfReader(temporary_file.name)
         pdf_writer = pypdf.PdfWriter()
 

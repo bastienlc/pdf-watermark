@@ -54,17 +54,20 @@ def convert_content_to_images(
     file_name: str, page_width: int, page_height: int, dpi: int
 ):
 
-    images = convert_from_path(
-        file_name, dpi=dpi, fmt="jpeg", transparent=True, hide_annotations=True
-    )
+    images = convert_from_path(file_name, dpi=dpi, fmt="png", transparent=True)
     pdf = canvas.Canvas(file_name, pagesize=(page_width, page_height))
 
     for image in images:
         compressed = BytesIO()
-        image.save(compressed, format="jpeg", optimize=True, quality=dpi // 10)
+        image.save(compressed, format="png", optimize=True, quality=dpi // 10)
 
         pdf.drawImage(
-            ImageReader(compressed), 0, 0, width=page_width, height=page_height
+            ImageReader(compressed),
+            0,
+            0,
+            width=page_width,
+            height=page_height,
+            mask="auto",
         )
         pdf.showPage()
 

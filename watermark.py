@@ -52,6 +52,13 @@ def generic_watermark_parameters(f):
         default=12,
     )
     @click.option(
+        "--unselectable",
+        type=bool,
+        is_flag=True,
+        help="Make the watermark text unselectable. This works by drawing the text as an image, and thus results in a larger file size.",
+        default=False,
+    )
+    @click.option(
         "-is",
         "--image-scale",
         type=float,
@@ -119,6 +126,7 @@ def insert(
     text_color,
     text_font,
     text_size,
+    unselectable,
     image_scale,
     save_as_image,
     dpi,
@@ -142,6 +150,7 @@ def insert(
             text_color=text_color,
             text_font=text_font,
             text_size=text_size,
+            unselectable=unselectable,
             image_scale=image_scale,
             save_as_image=save_as_image,
             dpi=dpi,
@@ -187,6 +196,7 @@ def grid(
     text_color,
     text_font,
     text_size,
+    unselectable,
     image_scale,
     save_as_image,
     dpi,
@@ -210,6 +220,7 @@ def grid(
             text_color=text_color,
             text_font=text_font,
             text_size=text_size,
+            unselectable=unselectable,
             image_scale=image_scale,
             save_as_image=save_as_image,
             dpi=dpi,

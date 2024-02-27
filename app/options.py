@@ -15,6 +15,7 @@ class DrawingOptions:
         text_color: str,
         text_font: str,
         text_size: int,
+        unselectable: bool,
         image_scale: float,
         save_as_image: bool,
         dpi: int,
@@ -35,6 +36,7 @@ class DrawingOptions:
         self.text_color = HexColor(text_color)
         self.text_font = text_font
         self.text_size = text_size
+        self.unselectable = unselectable
         self.image_scale = image_scale
         self.save_as_image = save_as_image
         self.dpi = dpi
