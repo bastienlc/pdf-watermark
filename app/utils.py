@@ -1,7 +1,10 @@
+from io import BytesIO
 from typing import Tuple
-from reportlab.pdfgen import canvas
+
 import numpy as np
+from pdf2image import convert_from_path
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen import canvas
 
 
 def draw_centered_image(
@@ -45,3 +48,27 @@ def fit_image(image_width, image_height, max_image_width, max_image_height, scal
     image_height *= scale
 
     return image_width, image_height
+
+
+def convert_content_to_images(
+    file_name: str, page_width: int, page_height: int, dpi: int
+):
+
+    images = convert_from_path(file_name, dpi=dpi, fmt="png", transparent=True)
+    pdf = canvas.Canvas(file_name, pagesize=(page_width, page_height))
+
+    for image in images:
+        compressed = BytesIO()
+        image.save(compressed, format="png", optimize=True, quality=dpi // 10)
+
+        pdf.drawImage(
+            ImageReader(compressed),
+            0,
+            0,
+            width=page_width,
+            height=page_height,
+            mask="auto",
+        )
+        pdf.showPage()
+
+    pdf.save()

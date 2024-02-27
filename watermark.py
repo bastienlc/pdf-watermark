@@ -1,12 +1,9 @@
-import click
-from app.options import (
-    DrawingOptions,
-    FilesOptions,
-    GridOptions,
-    InsertOptions,
-)
-from app.handler import add_watermark_from_options
 from functools import wraps
+
+import click
+
+from app.handler import add_watermark_from_options
+from app.options import DrawingOptions, FilesOptions, GridOptions, InsertOptions
 
 
 def generic_watermark_parameters(f):
@@ -55,11 +52,31 @@ def generic_watermark_parameters(f):
         default=12,
     )
     @click.option(
+        "--unselectable",
+        type=bool,
+        is_flag=True,
+        help="Make the watermark text unselectable. This works by drawing the text as an image, and thus results in a larger file size.",
+        default=False,
+    )
+    @click.option(
         "-is",
         "--image-scale",
         type=float,
         help="Scale factor for the image. Note that before this factor is applied, the image is already scaled down to fit in the boxes.",
         default=1,
+    )
+    @click.option(
+        "--save-as-image",
+        type=bool,
+        is_flag=True,
+        help="Convert each PDF page to an image. This makes removing the watermark more difficult but also increases the file size.",
+        default=False,
+    )
+    @click.option(
+        "--dpi",
+        type=int,
+        help="DPI to use when saving the PDF as an image.",
+        default=300,
     )
     def wrapper(*args, **kwargs):
         return f(*args, **kwargs)
@@ -109,7 +126,10 @@ def insert(
     text_color,
     text_font,
     text_size,
+    unselectable,
     image_scale,
+    save_as_image,
+    dpi,
     y,
     x,
     horizontal_alignment,
@@ -130,7 +150,10 @@ def insert(
             text_color=text_color,
             text_font=text_font,
             text_size=text_size,
+            unselectable=unselectable,
             image_scale=image_scale,
+            save_as_image=save_as_image,
+            dpi=dpi,
         ),
         InsertOptions(
             y=y,
@@ -159,6 +182,7 @@ def insert(
     "-m",
     "--margin",
     type=bool,
+    is_flag=True,
     help="Wether to leave a margin around the page or not. When False (default), the watermark will be cut on the PDF edges.",
     default=False,
 )
@@ -172,7 +196,10 @@ def grid(
     text_color,
     text_font,
     text_size,
+    unselectable,
     image_scale,
+    save_as_image,
+    dpi,
     horizontal_boxes,
     vertical_boxes,
     margin,
@@ -193,7 +220,10 @@ def grid(
             text_color=text_color,
             text_font=text_font,
             text_size=text_size,
+            unselectable=unselectable,
             image_scale=image_scale,
+            save_as_image=save_as_image,
+            dpi=dpi,
         ),
         GridOptions(
             horizontal_boxes=horizontal_boxes,

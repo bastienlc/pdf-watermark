@@ -1,7 +1,8 @@
+import os
 from enum import Enum
 from typing import List, Union
+
 from reportlab.lib.colors import HexColor
-import os
 from reportlab.lib.utils import ImageReader
 
 
@@ -14,7 +15,10 @@ class DrawingOptions:
         text_color: str,
         text_font: str,
         text_size: int,
+        unselectable: bool,
         image_scale: float,
+        save_as_image: bool,
+        dpi: int,
     ) -> None:
         self.image = None
         self.text = None
@@ -32,7 +36,10 @@ class DrawingOptions:
         self.text_color = HexColor(text_color)
         self.text_font = text_font
         self.text_size = text_size
+        self.unselectable = unselectable
         self.image_scale = image_scale
+        self.save_as_image = save_as_image
+        self.dpi = dpi
 
 
 class FilesOptions:

@@ -1,6 +1,6 @@
 # pdf-watermark
 
-A python CLI tool to add watermarks to a PDF. Support for bulk processing of multiple PDF files, with nice saving options.
+A python CLI tool to add watermarks to a PDF. Allows for processing whole directories while keeping the directory structure.
 
 ## Description
 
@@ -20,13 +20,7 @@ Below is an example of a PDF before using this tool, after using this tool with 
   <img src="https://raw.githubusercontent.com/bastienlc/pdf-watermark/master/images/image.png" width="29%" />
 </p>
 
-You can control the opacity of the watermark and its inclination.
-
-There are also specific options for text and image watermarks. For text watermarks, you can control the color, font and font size. For image watermarks, you can add a scale factor (by default, the image is scaled to fit nicely in the rectangles created by the horizontal and vertical repetitions).
-
-With the *grid* command, you can control the number of repetitions along the horizontal and vertical directions, as well as wether to leave a margin around the page or not.
-
-With the *insert* command, you can control the x and y coordinates at which the watermark is inserted, as well as the horizontal alignment relative to x (left, center or right).
+Many options are available to customize the watermark, such as the position, the opacity, the angle, the color, the font, the size, etc. A detailed list of options is available below.
 
 ## Getting Started
 
@@ -93,9 +87,16 @@ Options:
   -tf, --text-font TEXT           Text font to use. Supported fonts are those
                                   supported by reportlab.
   -ts, --text-size INTEGER        Text font size.
+  --unselectable                  Make the watermark text unselectable. This
+                                  works by drawing the text as an image, and
+                                  thus results in a larger file size.
   -is, --image-scale FLOAT        Scale factor for the image. Note that before
                                   this factor is applied, the image is already
                                   scaled down to fit in the boxes.
+  --save-as-image                 Convert each PDF page to an image. This
+                                  makes removing the watermark more difficult
+                                  but also increases the file size.
+  --dpi INTEGER                   DPI to use when saving the PDF as an image.
   --help                          Show this message and exit.
 ```
 
@@ -115,7 +116,7 @@ Options:
                                   the horizontal direction.
   -v, --vertical-boxes INTEGER    Number of repetitions of the watermark along
                                   the vertical direction.
-  -m, --margin BOOLEAN            Wether to leave a margin around the page or
+  -m, --margin                    Wether to leave a margin around the page or
                                   not. When False (default), the watermark
                                   will be cut on the PDF edges.
   -s, --save TEXT                 File or folder to save results to. By
@@ -128,11 +129,27 @@ Options:
   -tf, --text-font TEXT           Text font to use. Supported fonts are those
                                   supported by reportlab.
   -ts, --text-size INTEGER        Text font size.
+  --unselectable                  Make the watermark text unselectable. This
+                                  works by drawing the text as an image, and
+                                  thus results in a larger file size.
   -is, --image-scale FLOAT        Scale factor for the image. Note that before
                                   this factor is applied, the image is already
                                   scaled down to fit in the boxes.
+  --save-as-image                 Convert each PDF page to an image. This
+                                  makes removing the watermark more difficult
+                                  but also increases the file size.
+  --dpi INTEGER                   DPI to use when saving the PDF as an image.
   --help                          Show this message and exit.
 ```
+
+## Contributing
+
+Contributions are always welcome, whether it is for bug fixes, new features or just to improve the documentation and code quality. Feel free to open an issue or a pull request.
+
+### Checklist
+
+* The code is formatted with `black` and `isort`.
+* The readme is updated if necessary (especially if the command line interface changes).
 
 ## Authors
 
