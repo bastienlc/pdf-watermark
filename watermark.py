@@ -201,3 +201,6 @@ def grid(
             margin=margin,
         ),
     )
+
+if __name__ == '__main__':
+    cli()

@@ -6,6 +6,7 @@ from app.options import (
     InsertOptions,
 )
 import pypdf
+import os
 from tempfile import NamedTemporaryFile
 
 from app.draw import draw_watermarks
@@ -22,7 +23,7 @@ def add_watermark_to_pdf(
     page_width = pdf_box.width
     page_height = pdf_box.height
 
-    with NamedTemporaryFile() as temporary_file:
+    with NamedTemporaryFile(delete=False) as temporary_file:
         # The watermark is stored in a temporary pdf file
         draw_watermarks(
             temporary_file.name,
@@ -38,6 +39,10 @@ def add_watermark_to_pdf(
         for page in pdf_to_transform.pages:
             page.merge_page(watermark_pdf.pages[0])
             pdf_writer.add_page(page)
+
+        # Remove temp file - https://stackoverflow.com/questions/23212435/permission-denied-to-write-to-my-temporary-file
+        temporary_file.close()
+        os.unlink(temporary_file.name)
 
     with open(output, "wb") as f:
         pdf_writer.write(f)
