@@ -180,6 +180,9 @@ pip install -e .
 * 2.0.0
     * Move tool to subcommand **grid**.
     * Add **insert** command.
+* 2.1.0
+    * Add --unselectable and --save-as-image options.
+    * Fix bug with temporary files on Windows.
 
 ## License
 
