@@ -4,8 +4,8 @@ from typing import Union
 import numpy as np
 from reportlab.pdfgen import canvas
 
-from app.options import Alignments, DrawingOptions, GridOptions, InsertOptions
-from app.utils import change_base, draw_centered_image, fit_image
+from pdf_watermark.options import Alignments, DrawingOptions, GridOptions, InsertOptions
+from pdf_watermark.utils import change_base, draw_centered_image, fit_image
 
 
 def draw_one_watermark(

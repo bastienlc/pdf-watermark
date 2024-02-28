@@ -2,8 +2,13 @@ from functools import wraps
 
 import click
 
-from app.handler import add_watermark_from_options
-from app.options import DrawingOptions, FilesOptions, GridOptions, InsertOptions
+from pdf_watermark.handler import add_watermark_from_options
+from pdf_watermark.options import (
+    DrawingOptions,
+    FilesOptions,
+    GridOptions,
+    InsertOptions,
+)
 
 
 def generic_watermark_parameters(f):
@@ -232,5 +237,6 @@ def grid(
         ),
     )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     cli()

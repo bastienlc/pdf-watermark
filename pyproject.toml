@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pdf-watermark"
+dynamic = ["version", "dependencies"]
+description = "A python CLI tool to add watermarks to a PDF"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Bastien Le Chenadec", email = "bastien.lechenadec@gmail.com" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+]
+keywords = ["pdf", "watermark", "cli"]
+
+[project.scripts]
+watermark = "pdf_watermark.watermark:cli"
+
+[project.urls]
+Homepage = "https://github.com/bastienlc/pdf-watermark"
+Repository = "https://github.com/bastienlc/pdf-watermark.git"
+"Bug Tracker" = "https://github.com/bastienlc/pdf-watermark/issues"
+
+[tool.setuptools_scm]
+version_file = "src/pdf_watermark/_version.py"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }

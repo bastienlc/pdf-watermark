@@ -146,7 +146,22 @@ Options:
 
 Contributions are always welcome, whether it is for bug fixes, new features or just to improve the documentation and code quality. Feel free to open an issue or a pull request.
 
-### Checklist
+### Building the package
+
+Make sure you have `setuptools` and `build` installed.
+
+```
+pip install setuptools build
+python3 -m build
+```
+
+### Editable install for development
+
+```
+pip install -e .
+```
+
+### Checklist before opening a pull request
 
 * The code is formatted with `black` and `isort`.
 * The readme is updated if necessary (especially if the command line interface changes).

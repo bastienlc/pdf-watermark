@@ -1,6 +1,7 @@
-**/__pycache__/**
-.vscode/**
-venv/**
-build/**
-dist/**
-pdf_watermark.egg-info/**
+__pycache__
+.vscode
+venv
+build
+dist
+pdf_watermark.egg-info
+_version.py

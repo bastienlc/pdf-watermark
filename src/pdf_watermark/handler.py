@@ -4,9 +4,14 @@ from typing import Union
 
 import pypdf
 
-from app.draw import draw_watermarks
-from app.options import DrawingOptions, FilesOptions, GridOptions, InsertOptions
-from app.utils import convert_content_to_images
+from pdf_watermark.draw import draw_watermarks
+from pdf_watermark.options import (
+    DrawingOptions,
+    FilesOptions,
+    GridOptions,
+    InsertOptions,
+)
+from pdf_watermark.utils import convert_content_to_images
 
 
 def add_watermark_to_pdf(
