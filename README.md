@@ -28,6 +28,7 @@ Many options are available to customize the watermark, such as the position, the
 
 * This project was built with python 3.11. However it should also run just fine with older versions.
 * See `requirements.txt` for the list of dependencies.
+* Some options require parts of the `poppler` library to be installed (--save-as-image and --unselectable). Please refer to the [pdf2image](https://pypi.org/project/pdf2image/) or [poppler](https://poppler.freedesktop.org/) documentation for installation instructions.
 
 ### Installing
 
@@ -36,10 +37,6 @@ This package is available on PyPi.
 ```
 pip install pdf-watermark
 ```
-
-### Dependencies
-
-Some options require parts of the `poppler` library to be installed (--save-as-image and --unselectable). Please refer to the [pdf2image](https://pypi.org/project/pdf2image/) or [poppler](https://poppler.freedesktop.org/) documentation for installation instructions.
 
 ### Usage
 
