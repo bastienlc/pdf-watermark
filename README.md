@@ -37,6 +37,10 @@ This package is available on PyPi.
 pip install pdf-watermark
 ```
 
+### Dependencies
+
+Some options require parts of the `poppler` library to be installed (--save-as-image and --unselectable). Please refer to the [pdf2image](https://pypi.org/project/pdf2image/) or [poppler](https://poppler.freedesktop.org/) documentation for installation instructions.
+
 ### Usage
 
 ```
