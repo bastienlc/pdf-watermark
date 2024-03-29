@@ -11,6 +11,24 @@ from pdf_watermark.options import (
 )
 
 
+class DEFAULTS:
+    angle = 45
+    dpi = 300
+    horizontal_alignment = "center"
+    horizontal_boxes = 3
+    image_scale = 1
+    margin = False
+    opacity = 0.1
+    save_as_image = False
+    text_color = "#000000"
+    text_font = "Helvetica"
+    text_size = 12
+    unselectable = False
+    vertical_boxes = 6
+    x = 0.5
+    y = 0.5
+
+
 def generic_watermark_parameters(f):
     @wraps(f)
     @click.argument("file")
@@ -26,62 +44,62 @@ def generic_watermark_parameters(f):
         "--opacity",
         type=float,
         help="Watermark opacity between 0 (invisible) and 1 (no transparency).",
-        default=0.1,
+        default=DEFAULTS.opacity,
     )
     @click.option(
         "-a",
         "--angle",
         type=float,
         help="Watermark inclination in degrees.",
-        default=45,
+        default=DEFAULTS.angle,
     )
     @click.option(
         "-tc",
         "--text-color",
         type=str,
         help="Text color in hexadecimal format, e.g. #000000.",
-        default="#000000",
+        default=DEFAULTS.text_color,
     )
     @click.option(
         "-tf",
         "--text-font",
         type=str,
         help="Text font to use. Supported fonts are those supported by reportlab.",
-        default="Helvetica",
+        default=DEFAULTS.text_font,
     )
     @click.option(
         "-ts",
         "--text-size",
         type=int,
         help="Text font size.",
-        default=12,
+        default=DEFAULTS.text_size,
     )
     @click.option(
         "--unselectable",
         type=bool,
         is_flag=True,
         help="Make the watermark text unselectable. This works by drawing the text as an image, and thus results in a larger file size.",
-        default=False,
+        default=DEFAULTS.unselectable,
     )
     @click.option(
         "-is",
         "--image-scale",
         type=float,
         help="Scale factor for the image. Note that before this factor is applied, the image is already scaled down to fit in the boxes.",
-        default=1,
+        default=DEFAULTS.image_scale,
     )
     @click.option(
         "--save-as-image",
         type=bool,
         is_flag=True,
         help="Convert each PDF page to an image. This makes removing the watermark more difficult but also increases the file size.",
-        default=False,
+        default=DEFAULTS.save_as_image,
     )
     @click.option(
         "--dpi",
         type=int,
         help="DPI to use when saving the PDF as an image.",
-        default=300,
+        default=DEFAULTS.dpi,
     )
     def wrapper(*args, **kwargs):
         return f(*args, **kwargs)
@@ -105,21 +123,21 @@ def cli():
     "--y",
     type=float,
     help="Position of the watermark with respect to the vertical direction. Must be between 0 and 1.",
-    default=0.5,
+    default=DEFAULTS.y,
 )
 @click.option(
     "-x",
     "--x",
     type=float,
     help="Position of the watermark with respect to the horizontal direction. Must be between 0 and 1.",
-    default=0.5,
+    default=DEFAULTS.x,
 )
 @click.option(
     "-ha",
     "--horizontal-alignment",
     type=str,
     help="Alignment of the watermark with respect to the horizontal direction. Can be one of 'left', 'right' and 'center'.",
-    default="center",
+    default=DEFAULTS.horizontal_alignment,
 )
 @generic_watermark_parameters
 def insert(
@@ -174,14 +192,14 @@ def insert(
     "--horizontal-boxes",
     type=int,
     help="Number of repetitions of the watermark along the horizontal direction.",
-    default=3,
+    default=DEFAULTS.horizontal_boxes,
 )
 @click.option(
     "-v",
     "--vertical-boxes",
     type=int,
     help="Number of repetitions of the watermark along the vertical direction.",
-    default=6,
+    default=DEFAULTS.vertical_boxes,
 )
 @click.option(
     "-m",
@@ -189,7 +207,7 @@ def insert(
     type=bool,
     is_flag=True,
     help="Wether to leave a margin around the page or not. When False (default), the watermark will be cut on the PDF edges.",
-    default=False,
+    default=DEFAULTS.margin,
 )
 @generic_watermark_parameters
 def grid(

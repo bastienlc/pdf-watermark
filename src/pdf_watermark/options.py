@@ -10,7 +10,7 @@ class DrawingOptions:
     def __init__(
         self,
         watermark: str,
-        opacity,
+        opacity: float,
         angle: float,
         text_color: str,
         text_font: str,
