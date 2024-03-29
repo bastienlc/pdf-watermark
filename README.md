@@ -165,6 +165,7 @@ pip install -e .
 ### Checklist before opening a pull request
 
 * The code is formatted with `black` and `isort`.
+* The tests pass.
 * The readme is updated if necessary (especially if the command line interface changes).
 
 ## Authors
@@ -184,6 +185,9 @@ pip install -e .
 * 2.1.0
     * Add --unselectable and --save-as-image options.
     * Fix bug with temporary files on Windows.
+* 2.1.2
+    * Fix missing Poppler dependancy.
+    * Add test and lint to CI.
 
 ## License
 
