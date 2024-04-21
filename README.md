@@ -40,6 +40,13 @@ pip install pdf-watermark
 
 ### Usage
 
+**TLDR**
+```bash
+watermark grid input.pdf "watermark text" -s output.pdf # Grid pattern for a single file
+watermark insert input_folder "watermark_image.png" # Insert image for a whole directory, overwriting the input files
+```
+
+**Detailed usage**
 ```
 Usage: watermark [OPTIONS] COMMAND [ARGS]...
 
@@ -188,6 +195,8 @@ pip install -e .
 * 2.1.2
     * Fix missing Poppler dependancy.
     * Add test and lint to CI.
+* 2.2.0
+    * Support PDFs with pages of different sizes.
 
 ## License
 

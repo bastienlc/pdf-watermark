@@ -4,9 +4,7 @@ Test the outputs of the CLI with a bunch of different options on simple features
 
 import os
 
-import numpy as np
 import pytest
-from pdf2image import convert_from_path
 
 from pdf_watermark.handler import add_watermark_from_options
 from pdf_watermark.options import (
@@ -16,6 +14,7 @@ from pdf_watermark.options import (
     InsertOptions,
 )
 from pdf_watermark.watermark import DEFAULTS
+from tests.utils import assert_pdfs_are_close
 
 INPUT = "tests/fixtures/input.pdf"
 OUTPUT = "output.pdf"
@@ -60,15 +59,6 @@ INSERT_OPTIONS_FIXTURES = [
         horizontal_alignment=DEFAULTS.horizontal_alignment,
     )
 ]
-
-
-def assert_pdfs_are_close(path_1: str, path_2: str, epsilon: float = 1e-10):
-    """This function checks that two PDFs are close enough. We chose to convert the PDFs to images and then compare their L1 norms, because other techniques (hashing for instance) might break easily."""
-    images_1 = convert_from_path(path_1)
-    images_2 = convert_from_path(path_2)
-
-    for im1, im2 in zip(images_1, images_2):
-        assert np.sum(np.abs(np.array(im1) - np.array(im2))) < epsilon
 
 
 def test_add_watermark_from_options():

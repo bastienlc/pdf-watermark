@@ -11,7 +11,7 @@ from pdf_watermark.options import (
     GridOptions,
     InsertOptions,
 )
-from pdf_watermark.utils import convert_content_to_images
+from pdf_watermark.utils import convert_content_to_images, sort_pages
 
 
 def add_watermark_to_pdf(
@@ -20,42 +20,54 @@ def add_watermark_to_pdf(
     drawing_options: DrawingOptions,
     specific_options: Union[GridOptions, InsertOptions],
 ):
+    pdf_writer = pypdf.PdfWriter()
     pdf_to_transform = pypdf.PdfReader(input)
-    pdf_box = pdf_to_transform.pages[0].mediabox
-    page_width = pdf_box.width
-    page_height = pdf_box.height
 
-    with NamedTemporaryFile(delete=False) as temporary_file:
-        # The watermark is stored in a temporary pdf file
-        draw_watermarks(
-            temporary_file.name,
-            page_width,
-            page_height,
-            drawing_options,
-            specific_options,
-        )
+    page_sizes = []
+    for page in pdf_to_transform.pages:
+        page_sizes.append((page.mediabox.width, page.mediabox.height))
 
-        if drawing_options.unselectable and not drawing_options.save_as_image:
-            convert_content_to_images(
-                temporary_file.name, page_width, page_height, drawing_options.dpi
+    order = []
+    # Only one watermark is computed per page size
+    for watermark_width, watermark_height in set(page_sizes):
+        with NamedTemporaryFile(delete=False) as temporary_file:
+            # The watermark is stored in a temporary pdf file
+            draw_watermarks(
+                temporary_file.name,
+                watermark_width,
+                watermark_height,
+                drawing_options,
+                specific_options,
             )
 
-        watermark_pdf = pypdf.PdfReader(temporary_file.name)
-        pdf_writer = pypdf.PdfWriter()
+            if drawing_options.unselectable and not drawing_options.save_as_image:
+                convert_content_to_images(
+                    temporary_file.name,
+                    drawing_options.dpi,
+                )
 
-        for page in pdf_to_transform.pages:
-            page.merge_page(watermark_pdf.pages[0])
-            pdf_writer.add_page(page)
+            watermark_pdf = pypdf.PdfReader(temporary_file.name)
 
-        # Remove temp file - https://stackoverflow.com/questions/23212435/permission-denied-to-write-to-my-temporary-file
-        temporary_file.close()
-        os.unlink(temporary_file.name)
+            # Add watermark to pages with the same size
+            for index, (page, (page_width, page_height)) in enumerate(
+                zip(pdf_to_transform.pages, page_sizes)
+            ):
+                if page_width == watermark_width and page_height == watermark_height:
+                    page.merge_page(watermark_pdf.pages[0])
+                    pdf_writer.add_page(page)
+                    order.append(index)
+
+            # Remove temp file - https://stackoverflow.com/questions/23212435/permission-denied-to  -write-to-my-temporary-file
+            temporary_file.close()
+            os.unlink(temporary_file.name)
+
+    pdf_writer = sort_pages(pdf_writer, order)
 
     with open(output, "wb") as f:
         pdf_writer.write(f)
 
     if drawing_options.save_as_image:
-        convert_content_to_images(output, page_width, page_height, drawing_options.dpi)
+        convert_content_to_images(output, drawing_options.dpi)
 
 
 def add_watermark_from_options(
