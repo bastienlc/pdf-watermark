@@ -29,6 +29,20 @@ def draw_centered_image(
     )
 
 
+def draw_centered_string_with_line_breaks(
+    watermark: canvas.Canvas,
+    x: float,
+    y: float,
+    text: str,
+):
+    text_lines = text.split(r"\n")
+    for line in text_lines:
+        watermark.drawCentredString(x, y, line)
+        y -= (
+            watermark._leading
+        )  # line spacing is set when setting the font of the canvas
+
+
 def change_base(x: float, y: float, rotation_matrix: np.ndarray) -> Tuple[float, float]:
     # Since we rotated the original coordinates system, use the inverse of the rotation matrix
     # (which is the transposed matrix) to get the coordinates we have to draw at
