@@ -18,7 +18,12 @@ from tests.utils import assert_pdfs_are_close
 
 INPUT = "tests/fixtures/input.pdf"
 OUTPUT = "output.pdf"
-FIXTURES = ["tests/fixtures/0.pdf", "tests/fixtures/1.pdf"]
+FIXTURES = [
+    "tests/fixtures/0.pdf",
+    "tests/fixtures/1.pdf",
+    "tests/fixtures/2.pdf",
+    "tests/fixtures/3.pdf",
+]
 
 
 @pytest.fixture(autouse=True)
@@ -39,7 +44,19 @@ DRAWING_OPTIONS_FIXTURES = [
         image_scale=DEFAULTS.image_scale,
         save_as_image=DEFAULTS.save_as_image,
         dpi=DEFAULTS.dpi,
-    )
+    ),
+    DrawingOptions(
+        watermark=r"watermark\nwith\nline\nbreaks",
+        opacity=DEFAULTS.opacity,
+        angle=DEFAULTS.angle,
+        text_color=DEFAULTS.text_color,
+        text_font=DEFAULTS.text_font,
+        text_size=DEFAULTS.text_size,
+        unselectable=DEFAULTS.unselectable,
+        image_scale=DEFAULTS.image_scale,
+        save_as_image=DEFAULTS.save_as_image,
+        dpi=DEFAULTS.dpi,
+    ),
 ]
 
 FILES_OPTIONS_FIXTURES = [FilesOptions(INPUT, OUTPUT)]
