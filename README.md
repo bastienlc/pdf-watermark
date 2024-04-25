@@ -197,6 +197,8 @@ pip install -e .
     * Add test and lint to CI.
 * 2.2.0
     * Support PDFs with pages of different sizes.
+* 2.2.1
+    * Support line breaks in text watermark.
 
 ## License
 
