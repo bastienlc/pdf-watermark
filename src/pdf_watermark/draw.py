@@ -5,7 +5,12 @@ import numpy as np
 from reportlab.pdfgen import canvas
 
 from pdf_watermark.options import Alignments, DrawingOptions, GridOptions, InsertOptions
-from pdf_watermark.utils import change_base, draw_centered_image, fit_image
+from pdf_watermark.utils import (
+    change_base,
+    draw_centered_image,
+    draw_centered_string_with_line_breaks,
+    fit_image,
+)
 
 
 def draw_one_watermark(
@@ -20,7 +25,8 @@ def draw_one_watermark(
     x_prime, y_prime = change_base(x, y, rotation_matrix)
 
     if drawing_options.text is not None:
-        watermark.drawCentredString(
+        draw_centered_string_with_line_breaks(
+            watermark,
             x_prime,
             y_prime,
             drawing_options.text,
