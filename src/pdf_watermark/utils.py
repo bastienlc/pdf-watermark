@@ -36,11 +36,13 @@ def draw_centered_string_with_line_breaks(
     text: str,
 ):
     text_lines = text.split(r"\n")
+    line_height = (
+        watermark._leading
+    )  # line height is set when setting the font of the canvas
+    y += (len(text_lines) - 1) * line_height / 2  # also center the text vertically
     for line in text_lines:
         watermark.drawCentredString(x, y, line)
-        y -= (
-            watermark._leading
-        )  # line spacing is set when setting the font of the canvas
+        y -= watermark._leading
 
 
 def change_base(x: float, y: float, rotation_matrix: np.ndarray) -> Tuple[float, float]:
