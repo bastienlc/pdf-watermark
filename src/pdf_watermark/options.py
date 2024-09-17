@@ -53,12 +53,12 @@ class FilesOptions:
         if not os.path.exists(input):
             raise ValueError("Input file or directory does not exist.")
         elif os.path.isdir(input):
-            if output is not None and output.endswith(".pdf"):
+            if output is not None and output.endswith((".pdf", ".PDF")):
                 raise ValueError(
                     "Output must be a directory when input is a directory."
                 )
-        elif os.path.isfile(input) and input.endswith(".pdf"):
-            if output is not None and not output.endswith(".pdf"):
+        elif os.path.isfile(input) and input.endswith((".pdf", ".PDF")):
+            if output is not None and not output.endswith((".pdf", ".PDF")):
                 raise ValueError("Output must be a pdf file when input is a pdf file.")
         else:
             raise ValueError("Input must be a pdf file or a directory.")
@@ -92,7 +92,7 @@ class FilesOptions:
             if os.path.isdir(input_path):
                 self.add_directory_to_files(input_path, output_path)
 
-            elif os.path.isfile(input_path) and input_path.endswith(".pdf"):
+            elif os.path.isfile(input_path) and input_path.endswith((".pdf", ".PDF")):
                 self.input_files.append(input_path)
                 self.output_files.append(output_path)
 
