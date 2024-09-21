@@ -17,12 +17,17 @@ from pdf_watermark.watermark import DEFAULTS
 from tests.utils import assert_pdfs_are_close
 
 INPUT = "tests/fixtures/input.pdf"
+INPUT_UPPERCASE = "tests/fixtures/input.PDF"
 OUTPUT = "output.pdf"
 FIXTURES = [
     "tests/fixtures/0.pdf",
     "tests/fixtures/1.pdf",
     "tests/fixtures/2.pdf",
     "tests/fixtures/3.pdf",
+    "tests/fixtures/4.pdf",
+    "tests/fixtures/5.pdf",
+    "tests/fixtures/6.pdf",
+    "tests/fixtures/7.pdf",
 ]
 
 
@@ -59,7 +64,10 @@ DRAWING_OPTIONS_FIXTURES = [
     ),
 ]
 
-FILES_OPTIONS_FIXTURES = [FilesOptions(INPUT, OUTPUT)]
+FILES_OPTIONS_FIXTURES = [
+    FilesOptions(INPUT, OUTPUT),
+    FilesOptions(INPUT_UPPERCASE, OUTPUT),
+]
 
 GRID_OPTIONS_FIXTURES = [
     GridOptions(
