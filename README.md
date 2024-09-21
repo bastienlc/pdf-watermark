@@ -199,6 +199,8 @@ pip install -e .
     * Support PDFs with pages of different sizes.
 * 2.2.1
     * Support line breaks in text watermark.
+* 2.2.2
+    * Support uppercase PDF extension.
 
 ## License
 
