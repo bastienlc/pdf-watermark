@@ -4,6 +4,8 @@ from typing import List, Union
 
 from reportlab.lib.colors import HexColor
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 
 class DrawingOptions:
@@ -19,6 +21,7 @@ class DrawingOptions:
         image_scale: float,
         save_as_image: bool,
         dpi: int,
+        custom_font_path: str = None,
     ) -> None:
         self.image = None
         self.text = None
@@ -34,12 +37,22 @@ class DrawingOptions:
         self.opacity = opacity
         self.angle = angle
         self.text_color = HexColor(text_color)
-        self.text_font = text_font
         self.text_size = text_size
         self.unselectable = unselectable
         self.image_scale = image_scale
         self.save_as_image = save_as_image
         self.dpi = dpi
+        
+        if custom_font_path:
+            try:
+                font_name = os.path.splitext(os.path.basename(custom_font_path))[0]
+                pdfmetrics.registerFont(TTFont(font_name, custom_font_path))
+                self.text_font = font_name
+            except Exception as e:
+                print(f"Warning: Failed to register custom font: {str(e)}")
+                self.text_font = text_font
+        else:
+            self.text_font = text_font
 
 
 class FilesOptions:

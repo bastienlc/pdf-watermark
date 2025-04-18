@@ -68,6 +68,11 @@ def generic_watermark_parameters(f):
         default=DEFAULTS.text_font,
     )
     @click.option(
+        "--custom-font",
+        type=str,
+        help="Path to a custom font file to use. This will override the text-font option.",
+    )
+    @click.option(
         "-ts",
         "--text-size",
         type=int,
@@ -148,6 +153,7 @@ def insert(
     angle,
     text_color,
     text_font,
+    custom_font,
     text_size,
     unselectable,
     image_scale,
@@ -177,6 +183,7 @@ def insert(
             image_scale=image_scale,
             save_as_image=save_as_image,
             dpi=dpi,
+            custom_font_path=custom_font,
         ),
         InsertOptions(
             y=y,
@@ -218,6 +225,7 @@ def grid(
     angle,
     text_color,
     text_font,
+    custom_font,
     text_size,
     unselectable,
     image_scale,
@@ -247,6 +255,7 @@ def grid(
             image_scale=image_scale,
             save_as_image=save_as_image,
             dpi=dpi,
+            custom_font_path=custom_font,
         ),
         GridOptions(
             horizontal_boxes=horizontal_boxes,
