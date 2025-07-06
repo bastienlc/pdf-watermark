@@ -1,4 +1,4 @@
-name: Lint and Test 🧪
+name: Lint and Test
 
 on:
   pull_request:
@@ -12,26 +12,23 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Run ruff
-        uses: astral-sh/ruff-action@v3
+      - uses: actions/checkout@v4
+      - uses: astral-sh/ruff-action@v3
 
   test:
-    name: Run tests 🧪
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          sudo apt-get install -y poppler-utils
-      - name: Run pytest
-        run: |
-          pip install pytest pytest-cov
-          pytest --cov=src --cov-report=xml --cov-report=html
+          python-version: |
+            3.10
+            3.11
+            3.12
+            3.13
+      - run: |
+          pip install uv
+          make install-ci
+          make test
