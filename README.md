@@ -161,17 +161,11 @@ Contributions are always welcome, whether it is for bug fixes, new features or j
 
 ### Building the package
 
-Make sure you have `setuptools` and `build` installed.
+This project relies on [uv](https://github.com/astral-sh/uv).
 
 ```
-pip install setuptools build
-python3 -m build
-```
-
-### Editable install for development
-
-```
-pip install -e .
+pip install uv
+make install
 ```
 
 ### Checklist before opening a pull request

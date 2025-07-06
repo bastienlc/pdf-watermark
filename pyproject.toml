@@ -1,13 +1,9 @@
-[build-system]
-requires = ["setuptools>=61.0", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "pdf-watermark"
-dynamic = ["version", "dependencies"]
+dynamic = ["version"]
 description = "A python CLI tool to add watermarks to a PDF"
 readme = "README.md"
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 authors = [
     { name = "Bastien Le Chenadec", email = "bastien.lechenadec@gmail.com" },
 ]
@@ -17,20 +13,40 @@ classifiers = [
 ]
 keywords = ["pdf", "watermark", "cli"]
 
+# Dependencies
+
+requires-python = ">=3.10"
+dependencies = [
+    "pypdf>=3.11",
+    "pillow>=9.5.0",
+    "reportlab>=4.0.4",
+    "numpy>=1.25.0",
+    "click>=8.1.3",
+    "pdf2image>=1.17.0",
+]
+
+[dependency-groups]
+dev = ["pre-commit>=4.2.0", "pytest>=8.4.1", "pytest-cov>=6.2.1"]
+
+# Build
+
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
 [project.scripts]
 watermark = "pdf_watermark.watermark:cli"
-
-[project.urls]
-Homepage = "https://github.com/bastienlc/pdf-watermark"
-Repository = "https://github.com/bastienlc/pdf-watermark.git"
-"Bug Tracker" = "https://github.com/bastienlc/pdf-watermark/issues"
 
 [tool.setuptools_scm]
 version_file = "src/pdf_watermark/_version.py"
 local_scheme = "no-local-version"
 
-[tool.setuptools.dynamic]
-dependencies = { file = ["requirements.txt"] }
+# Other
+
+[project.urls]
+Homepage = "https://github.com/bastienlc/pdf-watermark"
+Repository = "https://github.com/bastienlc/pdf-watermark.git"
+"Bug Tracker" = "https://github.com/bastienlc/pdf-watermark/issues"
 
 [tool.pytest.ini_options]
 pythonpath = "src"
