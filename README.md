@@ -9,10 +9,11 @@ There are multiple similar tools out there but I couldn't find one that really s
 With this tool you can add a watermark to a PDF file. The watermark can either be a text string that you provide, or an image (PNG being the recommanded format).
 
 This tool provides two commands.
-* **insert**: The watermark is placed once on each page at a specific position.
-* **grid**: The watermark is repeated multiple times on each page in a grid pattern.
 
-Below is an example of a PDF before using this tool, after using this tool with the *grid* command and a text watermark, and after using this tool with the *grid* command and an image watermark.
+- **insert**: The watermark is placed once on each page at a specific position.
+- **grid**: The watermark is repeated multiple times on each page in a grid pattern.
+
+Below is an example of a PDF before using this tool, after using this tool with the _grid_ command and a text watermark, and after using this tool with the _grid_ command and an image watermark.
 
 <p align="middle">
   <img src="https://raw.githubusercontent.com/bastienlc/pdf-watermark/master/images/before.png" width="29%" />
@@ -26,9 +27,9 @@ Many options are available to customize the watermark, such as the position, the
 
 ### Dependencies
 
-* This project was built with python 3.11. However it should also run just fine with older versions.
-* See `requirements.txt` for the list of dependencies.
-* Some options require parts of the `poppler` library to be installed (--save-as-image and --unselectable). Please refer to the [pdf2image](https://pypi.org/project/pdf2image/) or [poppler](https://poppler.freedesktop.org/) documentation for installation instructions.
+- This project was built with python 3.11. However it should also run just fine with older versions.
+- See `requirements.txt` for the list of dependencies.
+- Some options require parts of the `poppler` library to be installed (--save-as-image and --unselectable). Please refer to the [pdf2image](https://pypi.org/project/pdf2image/) or [poppler](https://poppler.freedesktop.org/) documentation for installation instructions.
 
 ### Installing
 
@@ -41,12 +42,14 @@ pip install pdf-watermark
 ### Usage
 
 **TLDR**
+
 ```bash
 watermark grid input.pdf "watermark text" -s output.pdf # Grid pattern for a single file
 watermark insert input_folder "watermark_image.png" # Insert image for a whole directory, overwriting the input files
 ```
 
 **Detailed usage**
+
 ```
 Usage: watermark [OPTIONS] COMMAND [ARGS]...
 
@@ -64,6 +67,7 @@ Commands:
 ```
 
 **insert** command:
+
 ```
 Usage: watermark insert [OPTIONS] FILE WATERMARK
 
@@ -109,6 +113,7 @@ Options:
 ```
 
 **grid** command:
+
 ```
 Usage: watermark grid [OPTIONS] FILE WATERMARK
 
@@ -171,9 +176,9 @@ pip install -e .
 
 ### Checklist before opening a pull request
 
-* The code is formatted with `black` and `isort`.
-* The tests pass.
-* The readme is updated if necessary (especially if the command line interface changes).
+- The code is formatted with `ruff`.
+- The tests pass.
+- The readme is updated if necessary (especially if the command line interface changes).
 
 ## Authors
 
@@ -181,26 +186,26 @@ pip install -e .
 
 ## Version History
 
-* 1.0.0
-    * Add text watermark support.
-    * Add image watermark support.
-    * Add CLI.
-    * Add complex directories support.
-* 2.0.0
-    * Move tool to subcommand **grid**.
-    * Add **insert** command.
-* 2.1.0
-    * Add --unselectable and --save-as-image options.
-    * Fix bug with temporary files on Windows.
-* 2.1.2
-    * Fix missing Poppler dependancy.
-    * Add test and lint to CI.
-* 2.2.0
-    * Support PDFs with pages of different sizes.
-* 2.2.1
-    * Support line breaks in text watermark.
-* 2.2.2
-    * Support uppercase PDF extension.
+- 1.0.0
+  - Add text watermark support.
+  - Add image watermark support.
+  - Add CLI.
+  - Add complex directories support.
+- 2.0.0
+  - Move tool to subcommand **grid**.
+  - Add **insert** command.
+- 2.1.0
+  - Add --unselectable and --save-as-image options.
+  - Fix bug with temporary files on Windows.
+- 2.1.2
+  - Fix missing Poppler dependancy.
+  - Add test and lint to CI.
+- 2.2.0
+  - Support PDFs with pages of different sizes.
+- 2.2.1
+  - Support line breaks in text watermark.
+- 2.2.2
+  - Support uppercase PDF extension.
 
 ## License
 
@@ -208,4 +213,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-* [readme template](https://gist.github.com/DomPizzie/7a5ff55ffa9081f2de27c315f5018afc)
+- [readme template](https://gist.github.com/DomPizzie/7a5ff55ffa9081f2de27c315f5018afc)
