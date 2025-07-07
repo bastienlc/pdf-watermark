@@ -81,38 +81,43 @@ Usage: watermark insert [OPTIONS] FILE WATERMARK
 Options:
   -y, --y FLOAT                   Position of the watermark with respect to
                                   the vertical direction. Must be between 0
-                                  and 1.
+                                  and 1.  [default: 0.5]
   -x, --x FLOAT                   Position of the watermark with respect to
                                   the horizontal direction. Must be between 0
-                                  and 1.
+                                  and 1.  [default: 0.5]
   -ha, --horizontal-alignment TEXT
                                   Alignment of the watermark with respect to
                                   the horizontal direction. Can be one of
-                                  'left', 'right' and 'center'.
+                                  'left', 'right' and 'center'.  [default:
+                                  center]
   -s, --save TEXT                 File or folder to save results to. By
                                   default, the input files are overwritten.
   -o, --opacity FLOAT             Watermark opacity between 0 (invisible) and
-                                  1 (no transparency).
-  -a, --angle FLOAT               Watermark inclination in degrees.
+                                  1 (no transparency).  [default: 0.1]
+  -a, --angle FLOAT               Watermark inclination in degrees.  [default:
+                                  45]
   -tc, --text-color TEXT          Text color in hexadecimal format, e.g.
-                                  #000000.
+                                  #000000.  [default: #000000]
   -tf, --text-font TEXT           Text font to use. Supported fonts are those
-                                  supported by reportlab.
-  -ts, --text-size INTEGER        Text font size.
+                                  supported by reportlab.  [default:
+                                  Helvetica]
+  -ts, --text-size INTEGER        Text font size.  [default: 12]
   --unselectable                  Make the watermark text unselectable. This
                                   works by drawing the text as an image, and
                                   thus results in a larger file size.
   -is, --image-scale FLOAT        Scale factor for the image. Note that before
                                   this factor is applied, the image is already
-                                  scaled down to fit in the boxes.
+                                  scaled down to fit in the boxes.  [default:
+                                  1]
   --save-as-image                 Convert each PDF page to an image. This
                                   makes removing the watermark more difficult
                                   but also increases the file size.
   --dpi INTEGER                   DPI to use when saving the PDF as an image.
+                                  [default: 300]
   --dry-run                       Enumerate affected files without modifying
                                   them.
   --verbose BOOLEAN               Print information about the files being
-                                  processed.
+                                  processed.  [default: True]
   --help                          Show this message and exit.
 ```
 
@@ -130,36 +135,40 @@ Usage: watermark grid [OPTIONS] FILE WATERMARK
 
 Options:
   -h, --horizontal-boxes INTEGER  Number of repetitions of the watermark along
-                                  the horizontal direction.
+                                  the horizontal direction.  [default: 3]
   -v, --vertical-boxes INTEGER    Number of repetitions of the watermark along
-                                  the vertical direction.
+                                  the vertical direction.  [default: 6]
   -m, --margin                    Wether to leave a margin around the page or
                                   not. When False (default), the watermark
                                   will be cut on the PDF edges.
   -s, --save TEXT                 File or folder to save results to. By
                                   default, the input files are overwritten.
   -o, --opacity FLOAT             Watermark opacity between 0 (invisible) and
-                                  1 (no transparency).
-  -a, --angle FLOAT               Watermark inclination in degrees.
+                                  1 (no transparency).  [default: 0.1]
+  -a, --angle FLOAT               Watermark inclination in degrees.  [default:
+                                  45]
   -tc, --text-color TEXT          Text color in hexadecimal format, e.g.
-                                  #000000.
+                                  #000000.  [default: #000000]
   -tf, --text-font TEXT           Text font to use. Supported fonts are those
-                                  supported by reportlab.
-  -ts, --text-size INTEGER        Text font size.
+                                  supported by reportlab.  [default:
+                                  Helvetica]
+  -ts, --text-size INTEGER        Text font size.  [default: 12]
   --unselectable                  Make the watermark text unselectable. This
                                   works by drawing the text as an image, and
                                   thus results in a larger file size.
   -is, --image-scale FLOAT        Scale factor for the image. Note that before
                                   this factor is applied, the image is already
-                                  scaled down to fit in the boxes.
+                                  scaled down to fit in the boxes.  [default:
+                                  1]
   --save-as-image                 Convert each PDF page to an image. This
                                   makes removing the watermark more difficult
                                   but also increases the file size.
   --dpi INTEGER                   DPI to use when saving the PDF as an image.
+                                  [default: 300]
   --dry-run                       Enumerate affected files without modifying
                                   them.
   --verbose BOOLEAN               Print information about the files being
-                                  processed.
+                                  processed.  [default: True]
   --help                          Show this message and exit.
 ```
 
