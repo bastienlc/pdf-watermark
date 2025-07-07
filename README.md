@@ -111,6 +111,8 @@ Options:
   --dpi INTEGER                   DPI to use when saving the PDF as an image.
   --dry-run                       Enumerate affected files without modifying
                                   them.
+  --verbose BOOLEAN               Print information about the files being
+                                  processed.
   --help                          Show this message and exit.
 ```
 
@@ -156,6 +158,8 @@ Options:
   --dpi INTEGER                   DPI to use when saving the PDF as an image.
   --dry-run                       Enumerate affected files without modifying
                                   them.
+  --verbose BOOLEAN               Print information about the files being
+                                  processed.
   --help                          Show this message and exit.
 ```
 

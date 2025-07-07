@@ -95,6 +95,7 @@ def test_add_watermark_from_options():
                     files_options=files_options,
                     drawing_options=drawing_options,
                     specific_options=specific_options,
+                    verbose=False,
                 )
                 assert_pdfs_are_close(OUTPUT, FIXTURES[index])
                 index += 1

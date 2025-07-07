@@ -49,5 +49,6 @@ def test_different_page_sizes():
         files_options=FILES_OPTIONS_FIXTURE,
         drawing_options=DRAWING_OPTIONS_FIXTURE,
         specific_options=GRID_OPTIONS_FIXTURE,
+        verbose=False,
     )
     assert_pdfs_are_close(OUTPUT, FIXTURE)

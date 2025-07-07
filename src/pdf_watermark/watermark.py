@@ -14,6 +14,7 @@ from pdf_watermark.options import (
 class DEFAULTS:
     angle = 45
     dpi = 300
+    dry_run = False
     horizontal_alignment = "center"
     horizontal_boxes = 3
     image_scale = 1
@@ -24,6 +25,7 @@ class DEFAULTS:
     text_font = "Helvetica"
     text_size = 12
     unselectable = False
+    verbose = True
     vertical_boxes = 6
     x = 0.5
     y = 0.5
@@ -104,8 +106,14 @@ def generic_watermark_parameters(f):
     @click.option(
         "--dry-run",
         is_flag=True,
-        default=False,
         help="Enumerate affected files without modifying them.",
+        default=DEFAULTS.dry_run,
+    )
+    @click.option(
+        "--verbose",
+        type=bool,
+        help="Print information about the files being processed.",
+        default=DEFAULTS.verbose,
     )
     def wrapper(*args, **kwargs):
         return f(*args, **kwargs)
@@ -160,6 +168,7 @@ def insert(
     save_as_image,
     dpi,
     dry_run,
+    verbose,
     y,
     x,
     horizontal_alignment,
@@ -190,6 +199,7 @@ def insert(
             x=x,
             horizontal_alignment=horizontal_alignment,
         ),
+        verbose=verbose,
     )
 
 
@@ -231,6 +241,7 @@ def grid(
     save_as_image,
     dpi,
     dry_run,
+    verbose,
     horizontal_boxes,
     vertical_boxes,
     margin,
@@ -261,6 +272,7 @@ def grid(
             vertical_boxes=vertical_boxes,
             margin=margin,
         ),
+        verbose=verbose,
     )
 
 

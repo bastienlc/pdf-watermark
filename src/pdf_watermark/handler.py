@@ -75,12 +75,14 @@ def add_watermark_from_options(
     files_options: FilesOptions,
     drawing_options: DrawingOptions,
     specific_options: Union[GridOptions, InsertOptions],
+    verbose: bool,
 ):
     for input_file, output_file in files_options:
-        if input_file == output_file:
-            click.echo(f"modifying: {output_file}")
-        else:
-            click.echo(f"creating: {output_file}")
+        if verbose or files_options.dry_run:
+            if input_file == output_file:
+                click.echo(f"modifying: {output_file}")
+            else:
+                click.echo(f"creating: {output_file}")
         if not files_options.dry_run:
             add_watermark_to_pdf(
                 input_file, output_file, drawing_options, specific_options
