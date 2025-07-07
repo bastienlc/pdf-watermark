@@ -109,6 +109,8 @@ Options:
                                   makes removing the watermark more difficult
                                   but also increases the file size.
   --dpi INTEGER                   DPI to use when saving the PDF as an image.
+  --dry-run                       Enumerate affected files without modifying
+                                  them.
   --help                          Show this message and exit.
 ```
 
@@ -152,6 +154,8 @@ Options:
                                   makes removing the watermark more difficult
                                   but also increases the file size.
   --dpi INTEGER                   DPI to use when saving the PDF as an image.
+  --dry-run                       Enumerate affected files without modifying
+                                  them.
   --help                          Show this message and exit.
 ```
 

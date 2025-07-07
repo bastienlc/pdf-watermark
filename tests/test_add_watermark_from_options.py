@@ -65,8 +65,8 @@ DRAWING_OPTIONS_FIXTURES = [
 ]
 
 FILES_OPTIONS_FIXTURES = [
-    FilesOptions(INPUT, OUTPUT),
-    FilesOptions(INPUT_UPPERCASE, OUTPUT),
+    FilesOptions(INPUT, OUTPUT, dry_run=False),
+    FilesOptions(INPUT_UPPERCASE, OUTPUT, dry_run=False),
 ]
 
 GRID_OPTIONS_FIXTURES = [

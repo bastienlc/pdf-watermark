@@ -47,7 +47,9 @@ class FilesOptions:
         self,
         input: str,
         output: Union[None, str],
+        dry_run: bool,
     ) -> None:
+        self.dry_run = dry_run
         input = os.path.join(os.getcwd(), input)
 
         if not os.path.exists(input):

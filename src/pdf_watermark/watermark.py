@@ -101,6 +101,12 @@ def generic_watermark_parameters(f):
         help="DPI to use when saving the PDF as an image.",
         default=DEFAULTS.dpi,
     )
+    @click.option(
+        "--dry-run",
+        is_flag=True,
+        default=False,
+        help="Enumerate affected files without modifying them.",
+    )
     def wrapper(*args, **kwargs):
         return f(*args, **kwargs)
 
@@ -153,6 +159,7 @@ def insert(
     image_scale,
     save_as_image,
     dpi,
+    dry_run,
     y,
     x,
     horizontal_alignment,
@@ -165,7 +172,7 @@ def insert(
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
     add_watermark_from_options(
-        FilesOptions(input=file, output=save),
+        FilesOptions(input=file, output=save, dry_run=dry_run),
         DrawingOptions(
             watermark=watermark,
             opacity=opacity,
@@ -223,6 +230,7 @@ def grid(
     image_scale,
     save_as_image,
     dpi,
+    dry_run,
     horizontal_boxes,
     vertical_boxes,
     margin,
@@ -235,7 +243,7 @@ def grid(
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
     add_watermark_from_options(
-        FilesOptions(input=file, output=save),
+        FilesOptions(input=file, output=save, dry_run=dry_run),
         DrawingOptions(
             watermark=watermark,
             opacity=opacity,

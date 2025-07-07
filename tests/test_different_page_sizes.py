@@ -35,7 +35,7 @@ DRAWING_OPTIONS_FIXTURE = DrawingOptions(
     dpi=DEFAULTS.dpi,
 )
 
-FILES_OPTIONS_FIXTURE = FilesOptions(INPUT, OUTPUT)
+FILES_OPTIONS_FIXTURE = FilesOptions(INPUT, OUTPUT, dry_run=False)
 
 GRID_OPTIONS_FIXTURE = GridOptions(
     horizontal_boxes=DEFAULTS.horizontal_boxes,
