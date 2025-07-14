@@ -17,7 +17,7 @@ keywords = ["pdf", "watermark", "cli"]
 
 requires-python = ">=3.10"
 dependencies = [
-    "pypdf>=3.11",
+    "pypdf>=3.11.0",
     "pillow>=9.5.0",
     "reportlab>=4.0.4",
     "numpy>=1.25.0",
