@@ -223,6 +223,11 @@ make install
   - Support line breaks in text watermark.
 - 2.2.2
   - Support uppercase PDF extension.
+- 2.2.3
+  - Improve tooling and CI
+  - Add --dry-run option
+  - Add --verbose option
+  - Add parallel processing with --workers option
 
 ## License
 
