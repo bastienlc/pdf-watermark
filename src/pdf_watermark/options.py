@@ -81,6 +81,12 @@ class FilesOptions:
             self.output_files = []
             self.add_directory_to_files(input, output)
 
+        if len(self.input_files) != len(set(self.input_files)):
+            raise ValueError("Input files must be unique.")
+
+        if len(self.output_files) != len(set(self.output_files)):
+            raise ValueError("Output files must be unique.")
+
     def add_directory_to_files(
         self, input_directory: str, output_directory: str
     ) -> None:
