@@ -15,12 +15,10 @@ help:
 install-ci:
 	@echo "Installing project..."
 	$(UV) sync
-	sudo apt-get install -y poppler-utils
 
 install:
 	@echo "Installing project..."
 	$(UV) sync
-	sudo apt-get install -y poppler-utils
 	uv run pre-commit install
 
 lint:

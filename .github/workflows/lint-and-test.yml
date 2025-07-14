@@ -16,14 +16,29 @@ jobs:
       - uses: astral-sh/ruff-action@v3
 
   test:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.10, 3.11, 3.12, 3.13]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      # Install dependencies based on OS
+      - if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+      - if: runner.os == 'macOS'
+        run: |
+          brew install poppler
+      - if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Write-Host "Running Poppler installer script..."
+          & ${{ github.workspace }}\scripts\install-poppler.ps1
+      # Install and run tests
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
