@@ -71,9 +71,9 @@ class FilesOptions:
             output = os.path.join(os.getcwd(), output)
 
         if os.path.isfile(input):
-            self.input_files = [input]
+            self.input_files: List[str] = [input]
             if output is None:
-                self.output_files = [input]
+                self.output_files: List[str] = [input]
             else:
                 self.output_files = [output]
         else:
