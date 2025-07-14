@@ -15,6 +15,7 @@ class DEFAULTS:
     angle = 45
     dpi = 300
     dry_run = False
+    workers = 1
     horizontal_alignment = "center"
     horizontal_boxes = 3
     image_scale = 1
@@ -121,6 +122,13 @@ def generic_watermark_parameters(f):
         show_default=True,
     )
     @click.option(
+        "--workers",
+        type=int,
+        help="Number of parallel workers to use. This can speed up processing of multiple files.",
+        default=DEFAULTS.workers,
+        show_default=True,
+    )
+    @click.option(
         "--verbose",
         type=bool,
         help="Print information about the files being processed.",
@@ -183,6 +191,7 @@ def insert(
     save_as_image,
     dpi,
     dry_run,
+    workers,
     verbose,
     y,
     x,
@@ -196,7 +205,7 @@ def insert(
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
     add_watermark_from_options(
-        FilesOptions(input=file, output=save, dry_run=dry_run),
+        FilesOptions(input=file, output=save, dry_run=dry_run, workers=workers),
         DrawingOptions(
             watermark=watermark,
             opacity=opacity,
@@ -259,6 +268,7 @@ def grid(
     save_as_image,
     dpi,
     dry_run,
+    workers,
     verbose,
     horizontal_boxes,
     vertical_boxes,
@@ -272,7 +282,7 @@ def grid(
     FILE can be a single file or a directory, in which case all PDF files in the directory will be watermarked.
     """
     add_watermark_from_options(
-        FilesOptions(input=file, output=save, dry_run=dry_run),
+        FilesOptions(input=file, output=save, dry_run=dry_run, workers=workers),
         DrawingOptions(
             watermark=watermark,
             opacity=opacity,

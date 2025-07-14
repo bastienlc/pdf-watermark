@@ -1,4 +1,5 @@
 import os
+from concurrent.futures import ThreadPoolExecutor
 from tempfile import NamedTemporaryFile
 from typing import Union
 
@@ -58,7 +59,7 @@ def add_watermark_to_pdf(
                     pdf_writer.add_page(page)
                     order.append(index)
 
-            # Remove temp file - https://stackoverflow.com/questions/23212435/permission-denied-to  -write-to-my-temporary-file
+            # Remove temp file - https://stackoverflow.com/questions/23212435/permission-denied-to-write-to-my-temporary-file
             temporary_file.close()
             os.unlink(temporary_file.name)
 
@@ -77,7 +78,7 @@ def add_watermark_from_options(
     specific_options: Union[GridOptions, InsertOptions],
     verbose: bool,
 ):
-    for input_file, output_file in files_options:
+    def process_file(input_file, output_file):
         if verbose or files_options.dry_run:
             if input_file == output_file:
                 click.echo(f"modifying: {output_file}")
@@ -87,3 +88,14 @@ def add_watermark_from_options(
             add_watermark_to_pdf(
                 input_file, output_file, drawing_options, specific_options
             )
+
+    if files_options.workers > 1:
+        with ThreadPoolExecutor(max_workers=files_options.workers) as executor:
+            futures = [
+                executor.submit(process_file, inp, out) for inp, out in files_options
+            ]
+            for future in futures:
+                future.result()
+    else:
+        for input_file, output_file in files_options:
+            process_file(input_file, output_file)

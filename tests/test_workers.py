@@ -1,8 +1,9 @@
 """
-Test for PDFs with different page sizes.
+Test parallel processing of multiple PDFs.
 """
 
 import os
+from shutil import rmtree
 
 import pytest
 
@@ -11,15 +12,15 @@ from pdf_watermark.options import DrawingOptions, FilesOptions, GridOptions
 from pdf_watermark.watermark import DEFAULTS
 from tests.utils import assert_pdfs_are_close
 
-INPUT = "tests/fixtures/different_sizes_input.pdf"
-OUTPUT = "output.pdf"
-FIXTURE = "tests/fixtures/different_sizes_output.pdf"
+INPUT = "tests/fixtures/workers/inputs"
+FIXTURES = "tests/fixtures/workers/outputs"
+OUTPUT = "output"
 
 
 @pytest.fixture(autouse=True)
 def cleanup():
     yield
-    os.remove(OUTPUT)
+    rmtree(OUTPUT)
 
 
 DRAWING_OPTIONS = DrawingOptions(
@@ -35,9 +36,7 @@ DRAWING_OPTIONS = DrawingOptions(
     dpi=DEFAULTS.dpi,
 )
 
-FILES_OPTIONS = FilesOptions(
-    INPUT, OUTPUT, dry_run=DEFAULTS.dry_run, workers=DEFAULTS.workers
-)
+FILES_OPTIONS = FilesOptions(INPUT, OUTPUT, dry_run=DEFAULTS.dry_run, workers=4)
 
 GRID_OPTIONS = GridOptions(
     horizontal_boxes=DEFAULTS.horizontal_boxes,
@@ -53,4 +52,5 @@ def test_different_page_sizes():
         specific_options=GRID_OPTIONS,
         verbose=False,
     )
-    assert_pdfs_are_close(OUTPUT, FIXTURE)
+    for file in FILES_OPTIONS.output_files:
+        assert_pdfs_are_close(file, os.path.join(FIXTURES, os.path.basename(file)))

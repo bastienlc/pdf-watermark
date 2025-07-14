@@ -66,8 +66,10 @@ DRAWING_OPTIONS = [
 ]
 
 FILES_OPTIONS = [
-    FilesOptions(INPUT, OUTPUT, dry_run=False),
-    FilesOptions(INPUT_UPPERCASE, OUTPUT, dry_run=False),
+    FilesOptions(INPUT, OUTPUT, dry_run=DEFAULTS.dry_run, workers=DEFAULTS.workers),
+    FilesOptions(
+        INPUT_UPPERCASE, OUTPUT, dry_run=DEFAULTS.dry_run, workers=DEFAULTS.workers
+    ),
 ]
 
 GRID_OPTIONS = [

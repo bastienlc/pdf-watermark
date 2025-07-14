@@ -116,6 +116,9 @@ Options:
                                   [default: 300]
   --dry-run                       Enumerate affected files without modifying
                                   them.
+  --workers INTEGER               Number of parallel workers to use. This can
+                                  speed up processing of multiple files.
+                                  [default: 1]
   --verbose BOOLEAN               Print information about the files being
                                   processed.  [default: True]
   --help                          Show this message and exit.
@@ -167,6 +170,9 @@ Options:
                                   [default: 300]
   --dry-run                       Enumerate affected files without modifying
                                   them.
+  --workers INTEGER               Number of parallel workers to use. This can
+                                  speed up processing of multiple files.
+                                  [default: 1]
   --verbose BOOLEAN               Print information about the files being
                                   processed.  [default: True]
   --help                          Show this message and exit.

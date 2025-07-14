@@ -48,8 +48,10 @@ class FilesOptions:
         input: str,
         output: Union[None, str],
         dry_run: bool,
+        workers: int,
     ) -> None:
         self.dry_run = dry_run
+        self.workers = workers
         input = os.path.join(os.getcwd(), input)
 
         if not os.path.exists(input):
