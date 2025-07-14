@@ -3,6 +3,7 @@ Test the outputs of the CLI with a bunch of different options on simple features
 """
 
 import os
+from itertools import product
 
 import pytest
 
@@ -37,7 +38,7 @@ def cleanup():
     os.remove(OUTPUT)
 
 
-DRAWING_OPTIONS_FIXTURES = [
+DRAWING_OPTIONS = [
     DrawingOptions(
         watermark="watermark",
         opacity=DEFAULTS.opacity,
@@ -64,12 +65,12 @@ DRAWING_OPTIONS_FIXTURES = [
     ),
 ]
 
-FILES_OPTIONS_FIXTURES = [
+FILES_OPTIONS = [
     FilesOptions(INPUT, OUTPUT, dry_run=False),
     FilesOptions(INPUT_UPPERCASE, OUTPUT, dry_run=False),
 ]
 
-GRID_OPTIONS_FIXTURES = [
+GRID_OPTIONS = [
     GridOptions(
         horizontal_boxes=DEFAULTS.horizontal_boxes,
         vertical_boxes=DEFAULTS.vertical_boxes,
@@ -77,7 +78,7 @@ GRID_OPTIONS_FIXTURES = [
     )
 ]
 
-INSERT_OPTIONS_FIXTURES = [
+INSERT_OPTIONS = [
     InsertOptions(
         y=DEFAULTS.y,
         x=DEFAULTS.x,
@@ -86,16 +87,27 @@ INSERT_OPTIONS_FIXTURES = [
 ]
 
 
-def test_add_watermark_from_options():
-    index = 0
-    for files_options in FILES_OPTIONS_FIXTURES:
-        for drawing_options in DRAWING_OPTIONS_FIXTURES:
-            for specific_options in GRID_OPTIONS_FIXTURES + INSERT_OPTIONS_FIXTURES:
-                add_watermark_from_options(
-                    files_options=files_options,
-                    drawing_options=drawing_options,
-                    specific_options=specific_options,
-                    verbose=False,
-                )
-                assert_pdfs_are_close(OUTPUT, FIXTURES[index])
-                index += 1
+@pytest.mark.parametrize(
+    "files_options, drawing_options, specific_options, fixture",
+    [
+        (a, b, c, d)
+        for (a, b, c), d in zip(
+            product(
+                FILES_OPTIONS,
+                DRAWING_OPTIONS,
+                GRID_OPTIONS + INSERT_OPTIONS,
+            ),
+            FIXTURES,
+        )
+    ],
+)
+def test_add_watermark_from_options(
+    files_options, drawing_options, specific_options, fixture
+):
+    add_watermark_from_options(
+        files_options=files_options,
+        drawing_options=drawing_options,
+        specific_options=specific_options,
+        verbose=False,
+    )
+    assert_pdfs_are_close(OUTPUT, fixture)
