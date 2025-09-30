@@ -36,6 +36,7 @@ build-backend = "setuptools.build_meta"
 
 [project.scripts]
 watermark = "pdf_watermark.watermark:cli"
+pdf-watermark = "pdf_watermark.watermark:cli"
 
 [tool.setuptools_scm]
 version_file = "src/pdf_watermark/_version.py"

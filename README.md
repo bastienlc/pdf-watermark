@@ -39,6 +39,12 @@ This package is available on PyPi.
 pip install pdf-watermark
 ```
 
+The project can also be used with `uvx` without installing it manually:
+
+```
+uvx run pdf-watermark <command and options>
+```
+
 ### Usage
 
 **TLDR**
