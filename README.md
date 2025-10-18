@@ -276,6 +276,10 @@ make install
   - Add --dry-run option
   - Add --verbose option
   - Add parallel processing with --workers option
+- 3.0.0
+  - Add support for uvx execution
+  - Extend font support, enabling custom fonts and non-latin characters
+  - Migrate to dataclass-click, refactor codebase
 
 ## License
 
