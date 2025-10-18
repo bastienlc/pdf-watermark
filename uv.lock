@@ -369,6 +369,7 @@ dependencies = [
     { name = "pillow" },
     { name = "pypdf" },
     { name = "reportlab" },
+    { name = "types-reportlab" },
 ]
 
 [package.dev-dependencies]
@@ -384,8 +385,9 @@ requires-dist = [
     { name = "numpy", specifier = ">=1.25.0" },
     { name = "pdf2image", specifier = ">=1.17.0" },
     { name = "pillow", specifier = ">=9.5.0" },
-    { name = "pypdf", specifier = ">=3.11" },
-    { name = "reportlab", specifier = ">=4.0.4" },
+    { name = "pypdf", specifier = ">=3.11.0" },
+    { name = "reportlab", specifier = ">=4.4.4" },
+    { name = "types-reportlab", specifier = ">=4.4.4.20250926" },
 ]
 
 [package.metadata.requires-dev]
@@ -642,15 +644,15 @@ wheels = [
 
 [[package]]
 name = "reportlab"
-version = "4.4.2"
+version = "4.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "charset-normalizer" },
     { name = "pillow" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ec/9b/3483c7e4ad33d15f22d528872439e5bc92485814d7e7d10dbc3130368a83/reportlab-4.4.2.tar.gz", hash = "sha256:fc6283048ddd0781a9db1d671715990e6aa059c8d40ec9baf34294c4bd583a36", size = 3509063, upload-time = "2025-06-18T12:20:19.526Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f8/fa/ed71f3e750afb77497641eb0194aeda069e271ce6d6931140f8787e0e69a/reportlab-4.4.4.tar.gz", hash = "sha256:cb2f658b7f4a15be2cc68f7203aa67faef67213edd4f2d4bdd3eb20dab75a80d", size = 3711935, upload-time = "2025-09-19T10:43:36.502Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/74/ed990bc9586605d4e46f6b0e0b978a5b8e757aa599e39664bee26d6dc666/reportlab-4.4.2-py3-none-any.whl", hash = "sha256:58e11be387457928707c12153b7e41e52533a5da3f587b15ba8f8fd0805c6ee2", size = 1953624, upload-time = "2025-06-18T12:20:16.152Z" },
+    { url = "https://files.pythonhosted.org/packages/57/66/e040586fe6f9ae7f3a6986186653791fb865947f0b745290ee4ab026b834/reportlab-4.4.4-py3-none-any.whl", hash = "sha256:299b3b0534e7202bb94ed2ddcd7179b818dcda7de9d8518a57c85a58a1ebaadb", size = 1954981, upload-time = "2025-09-19T10:43:33.589Z" },
 ]
 
 [[package]]
@@ -690,6 +692,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/5b/b9/1ed31d167be802da0fc95020d04cd27b7d7065cc6fbefdd2f9186f60d7bd/tomli-2.2.1-cp313-cp313-win32.whl", hash = "sha256:d3f5614314d758649ab2ab3a62d4f2004c825922f9e370b29416484086b264ec", size = 98724, upload-time = "2024-11-27T22:38:32.837Z" },
     { url = "https://files.pythonhosted.org/packages/c7/32/b0963458706accd9afcfeb867c0f9175a741bf7b19cd424230714d722198/tomli-2.2.1-cp313-cp313-win_amd64.whl", hash = "sha256:a38aa0308e754b0e3c67e344754dff64999ff9b513e691d0e786265c93583c69", size = 109383, upload-time = "2024-11-27T22:38:34.455Z" },
     { url = "https://files.pythonhosted.org/packages/6e/c2/61d3e0f47e2b74ef40a68b9e6ad5984f6241a942f7cd3bbfbdbd03861ea9/tomli-2.2.1-py3-none-any.whl", hash = "sha256:cb55c73c5f4408779d0cf3eef9f762b9c9f147a77de7b258bef0a5628adc85cc", size = 14257, upload-time = "2024-11-27T22:38:35.385Z" },
+]
+
+[[package]]
+name = "types-reportlab"
+version = "4.4.4.20250926"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/be/33/f6627d4946c7475ad22ab665e7f5e7f366885f28e8f4b01b62476aca1709/types_reportlab-4.4.4.20250926.tar.gz", hash = "sha256:77a48ddf5eae855c011adecfd56f28726ca49e2b1ada84b1a38376e7b56fbb59", size = 68740, upload-time = "2025-09-26T02:53:51.146Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/2a/3ac52174c63a01717dcc1fa6888a59c721a22e72c54da8f520da7723ea5d/types_reportlab-4.4.4.20250926-py3-none-any.whl", hash = "sha256:024104f519acef4ead9fad324f10e1a0c35ca42b60f7c483e3cead389640b3ef", size = 109485, upload-time = "2025-09-26T02:53:49.954Z" },
 ]
 
 [[package]]
