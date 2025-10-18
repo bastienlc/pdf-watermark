@@ -4,11 +4,11 @@ and verify that the output matches expected fixtures.
 """
 
 import os
-import subprocess
 from itertools import product
 from typing import Union
 
 import pytest
+from click.testing import CliRunner
 
 from pdf_watermark.options import (
     DrawingOptions,
@@ -16,6 +16,7 @@ from pdf_watermark.options import (
     GridOptions,
     InsertOptions,
 )
+from pdf_watermark.watermark import cli
 from tests.test_add_watermark_from_options import (
     DRAWING_OPTIONS,
     FILES_OPTIONS,
@@ -56,10 +57,9 @@ def test_cli_watermark(
     fixture: str,
 ):
     """Test CLI commands produce expected output PDFs."""
+    runner = CliRunner()
+
     command = [
-        "python",
-        "-m",
-        "pdf_watermark.watermark",
         "grid" if isinstance(specific_options, GridOptions) else "insert",
         str(files_options.file),
         drawing_options.watermark,
@@ -68,14 +68,10 @@ def test_cli_watermark(
     ]
 
     # Run the CLI command
-    result = subprocess.run(
-        command,
-        capture_output=True,
-        text=True,
-    )
+    result = runner.invoke(cli, command)
 
     # Check that the command succeeded
-    assert result.returncode == 0, f"CLI command failed: {result.stderr}"
+    assert result.exit_code == 0, f"CLI command failed: {result.output}"
 
     # Verify the output matches the expected fixture
     assert_pdfs_are_close(OUTPUT, fixture)
@@ -83,43 +79,31 @@ def test_cli_watermark(
 
 def test_cli_help_commands():
     """Test that help commands work correctly."""
+    runner = CliRunner()
+
     # Test main help
-    result = subprocess.run(
-        ["python", "-m", "pdf_watermark.watermark", "--help"],
-        capture_output=True,
-        text=True,
-    )
-    assert result.returncode == 0
-    assert "grid" in result.stdout
-    assert "insert" in result.stdout
+    result = runner.invoke(cli, ["--help"])
+    assert result.exit_code == 0
+    assert "grid" in result.output
+    assert "insert" in result.output
 
     # Test grid help
-    result = subprocess.run(
-        ["python", "-m", "pdf_watermark.watermark", "grid", "--help"],
-        capture_output=True,
-        text=True,
-    )
-    assert result.returncode == 0
-    assert "horizontal-boxes" in result.stdout
+    result = runner.invoke(cli, ["grid", "--help"])
+    assert result.exit_code == 0
+    assert "horizontal-boxes" in result.output
 
     # Test insert help
-    result = subprocess.run(
-        ["python", "-m", "pdf_watermark.watermark", "insert", "--help"],
-        capture_output=True,
-        text=True,
-    )
-    assert result.returncode == 0
-    assert "--x" in result.stdout
-    assert "--y" in result.stdout
+    result = runner.invoke(cli, ["insert", "--help"])
+    assert result.exit_code == 0
+    assert "--x" in result.output
+    assert "--y" in result.output
 
 
 def test_cli_dry_run():
     """Test that dry-run flag doesn't create output files."""
+    runner = CliRunner()
     output = "dry_run_output.pdf"
     command = [
-        "python",
-        "-m",
-        "pdf_watermark.watermark",
         "grid",
         INPUT,
         "DRY RUN",
@@ -128,13 +112,9 @@ def test_cli_dry_run():
         "--dry-run",
     ]
 
-    result = subprocess.run(
-        command,
-        capture_output=True,
-        text=True,
-    )
+    result = runner.invoke(cli, command)
 
-    assert result.returncode == 0
+    assert result.exit_code == 0
     assert not os.path.exists(output), (
         "Output file should not be created with --dry-run"
     )
@@ -142,10 +122,8 @@ def test_cli_dry_run():
 
 def test_cli_invalid_input_file():
     """Test CLI behavior with non-existent input file."""
+    runner = CliRunner()
     command = [
-        "python",
-        "-m",
-        "pdf_watermark.watermark",
         "grid",
         "nonexistent.pdf",
         "TEST",
@@ -153,10 +131,6 @@ def test_cli_invalid_input_file():
         OUTPUT,
     ]
 
-    result = subprocess.run(
-        command,
-        capture_output=True,
-        text=True,
-    )
+    result = runner.invoke(cli, command)
 
-    assert result.returncode != 0, "CLI should fail with non-existent input file"
+    assert result.exit_code != 0, "CLI should fail with non-existent input file"

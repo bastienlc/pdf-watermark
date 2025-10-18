@@ -136,7 +136,7 @@ class TestFilesOptionsWithDirectories:
 
             # Test case 1: output=None (in-place modification)
             files_options_inplace = FilesOptions(
-                file=os.path.relpath(input_dir, os.getcwd()),
+                file=input_dir,
                 output=None,
                 dry_run=False,
                 workers=1,
@@ -150,8 +150,8 @@ class TestFilesOptionsWithDirectories:
 
             # Test case 2: separate output directory
             files_options_separate = FilesOptions(
-                file=os.path.relpath(input_dir, os.getcwd()),
-                output=os.path.relpath(output_dir, os.getcwd()),
+                file=input_dir,
+                output=output_dir,
                 dry_run=False,
                 workers=1,
             )
@@ -180,7 +180,7 @@ class TestFilesOptionsWithDirectories:
                 ValueError, match="Output must be a directory when input is a directory"
             ):
                 FilesOptions(
-                    file=os.path.relpath(input_dir, os.getcwd()),
+                    file=input_dir,
                     output="output.pdf",
                     dry_run=False,
                     workers=1,
