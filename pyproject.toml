@@ -4,9 +4,7 @@ dynamic = ["version"]
 description = "A python CLI tool to add watermarks to a PDF"
 readme = "README.md"
 license-files = ["LICENSE"]
-authors = [
-    { name = "Bastien Le Chenadec", email = "bastien.lechenadec@gmail.com" },
-]
+authors = [{ name = "Bastien Le Chenadec", email = "dev@lechenadec.com" }]
 classifiers = [
     "Programming Language :: Python :: 3.11",
     "Operating System :: OS Independent",
