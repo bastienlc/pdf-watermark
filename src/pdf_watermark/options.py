@@ -1,9 +1,11 @@
 import os
 from enum import Enum
-from typing import List, Union
+from typing import List, Optional, Union
 
 from reportlab.lib.colors import HexColor
 from reportlab.lib.utils import ImageReader
+
+from pdf_watermark.font_utils import register_custom_font
 
 
 class DrawingOptions:
@@ -19,6 +21,7 @@ class DrawingOptions:
         image_scale: float,
         save_as_image: bool,
         dpi: int,
+        custom_fonts_folder: Optional[str] = None,
     ) -> None:
         self.image = None
         self.text = None
@@ -40,6 +43,10 @@ class DrawingOptions:
         self.image_scale = image_scale
         self.save_as_image = save_as_image
         self.dpi = dpi
+        self.custom_fonts_folder = custom_fonts_folder
+
+        # Register the font if needed
+        register_custom_font(text_font, custom_fonts_folder)
 
 
 class FilesOptions:

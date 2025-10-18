@@ -105,8 +105,9 @@ Options:
   -tc, --text-color TEXT          Text color in hexadecimal format, e.g.
                                   #000000.  [default: #000000]
   -tf, --text-font TEXT           Text font to use. Supported fonts are those
-                                  supported by reportlab.  [default:
-                                  Helvetica]
+                                  supported by reportlab, or available on the
+                                  system or in the custom fonts folder.
+                                  [default: Helvetica]
   -ts, --text-size INTEGER        Text font size.  [default: 12]
   --unselectable                  Make the watermark text unselectable. This
                                   works by drawing the text as an image, and
@@ -127,6 +128,9 @@ Options:
                                   [default: 1]
   --verbose BOOLEAN               Print information about the files being
                                   processed.  [default: True]
+  --custom-fonts-folder TEXT      Folder path containing custom font files
+                                  (TTF, OTF, etc.) to search for non-standard
+                                  fonts.
   --help                          Show this message and exit.
 ```
 
@@ -159,8 +163,9 @@ Options:
   -tc, --text-color TEXT          Text color in hexadecimal format, e.g.
                                   #000000.  [default: #000000]
   -tf, --text-font TEXT           Text font to use. Supported fonts are those
-                                  supported by reportlab.  [default:
-                                  Helvetica]
+                                  supported by reportlab, or available on the
+                                  system or in the custom fonts folder.
+                                  [default: Helvetica]
   -ts, --text-size INTEGER        Text font size.  [default: 12]
   --unselectable                  Make the watermark text unselectable. This
                                   works by drawing the text as an image, and
@@ -181,8 +186,45 @@ Options:
                                   [default: 1]
   --verbose BOOLEAN               Print information about the files being
                                   processed.  [default: True]
+  --custom-fonts-folder TEXT      Folder path containing custom font files
+                                  (TTF, OTF, etc.) to search for non-standard
+                                  fonts.
   --help                          Show this message and exit.
 ```
+
+### Fonts
+
+<details>
+<summary>The default fonts provided by reportlab are available, including non-Latin fonts for Chinese, Japanese and Korean characters.
+</summary>
+
+- Helvetica
+- Helvetica-Bold
+- Helvetica-BoldOblique
+- Helvetica-Oblique
+- Times-Roman
+- Times-Bold
+- Times-BoldItalic
+- Times-Italic
+- Courier
+- Courier-Bold
+- Courier-BoldOblique
+- Courier-Oblique
+- Symbol
+- ZapfDingbats
+- STSong-Light
+- MSung-Light
+- HYGothic-Medium
+- HeiseiMin-W3
+- HeiseiKakuGo-W5
+</details>
+
+You can also provide your own fonts in two ways:
+
+- Either by placing the font files (TTF, OTF, etc.) in a default folder where reportlab can find them (depending on the values in `reportlab.rl_config.TTFSearchpath`, e.g. on Linux it can be `/usr/share/fonts`, on Windows it can be `C:\Windows\Fonts`, on MacOS it can be `~/Library/Fonts`, etc.).
+- Or by providing a custom folder containing the font files using the `--custom-fonts-folder` option.
+
+In either case, note that the `--text-font` option must be set to the exact name of the font (without the file extension). For example, if you have a font file named `MyFont-BoldItalic.ttf`, you should set `--text-font "MyFont-BoldItalic"`. There is no support for loading font family files at the moment. The recommended approach to provided custom fonts is to use TTF or OTF files.
 
 ## Contributing
 

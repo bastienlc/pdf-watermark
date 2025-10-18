@@ -30,6 +30,7 @@ class DEFAULTS:
     vertical_boxes = 6
     x = 0.5
     y = 0.5
+    custom_fonts_folder = None
 
 
 def generic_watermark_parameters(f):
@@ -71,7 +72,7 @@ def generic_watermark_parameters(f):
         "-tf",
         "--text-font",
         type=str,
-        help="Text font to use. Supported fonts are those supported by reportlab.",
+        help="Text font to use. Supported fonts are those supported by reportlab, or available on the system or in the custom fonts folder.",
         default=DEFAULTS.text_font,
         show_default=True,
     )
@@ -135,6 +136,13 @@ def generic_watermark_parameters(f):
         default=DEFAULTS.verbose,
         show_default=True,
     )
+    @click.option(
+        "--custom-fonts-folder",
+        type=str,
+        help="Folder path containing custom font files (TTF, OTF, etc.) to search for non-standard fonts.",
+        default=DEFAULTS.custom_fonts_folder,
+        show_default=True,
+    )
     def wrapper(*args, **kwargs):
         return f(*args, **kwargs)
 
@@ -196,6 +204,7 @@ def insert(
     y,
     x,
     horizontal_alignment,
+    custom_fonts_folder,
 ):
     """
     Add a watermark at a specific position.
@@ -217,6 +226,7 @@ def insert(
             image_scale=image_scale,
             save_as_image=save_as_image,
             dpi=dpi,
+            custom_fonts_folder=custom_fonts_folder,
         ),
         InsertOptions(
             y=y,
@@ -273,6 +283,7 @@ def grid(
     horizontal_boxes,
     vertical_boxes,
     margin,
+    custom_fonts_folder,
 ):
     """
     Add a watermark in a grid pattern.
@@ -294,6 +305,7 @@ def grid(
             image_scale=image_scale,
             save_as_image=save_as_image,
             dpi=dpi,
+            custom_fonts_folder=custom_fonts_folder,
         ),
         GridOptions(
             horizontal_boxes=horizontal_boxes,
