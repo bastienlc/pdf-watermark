@@ -167,6 +167,18 @@ toml = [
 ]
 
 [[package]]
+name = "dataclass-click"
+version = "1.0.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/89/82/5b6035efd90621771fa039960eab3e1ec7ff2a8625033272856843e8bd27/dataclass_click-1.0.4.tar.gz", hash = "sha256:10e7de638dd9e68ae9abd5086f61d8ddee42b1873a70f5fd9fd2167856afac11", size = 7580, upload-time = "2025-10-10T21:11:31.956Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/86/dc/38a94a2eb5f756724a6dc87a7aea38f7b747fe7b2e9daabc34a65e6cd9ac/dataclass_click-1.0.4-py3-none-any.whl", hash = "sha256:a225d30c04e4abbdba411cc3d5ec0a2ea829e1dca6500afe5f87cc243e5ead72", size = 8553, upload-time = "2025-10-10T21:11:30.514Z" },
+]
+
+[[package]]
 name = "distlib"
 version = "0.3.9"
 source = { registry = "https://pypi.org/simple" }
@@ -363,6 +375,7 @@ name = "pdf-watermark"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
+    { name = "dataclass-click" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pdf2image" },
@@ -382,6 +395,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "click", specifier = ">=8.1.3" },
+    { name = "dataclass-click", specifier = ">=1.0.4" },
     { name = "numpy", specifier = ">=1.25.0" },
     { name = "pdf2image", specifier = ">=1.17.0" },
     { name = "pillow", specifier = ">=9.5.0" },

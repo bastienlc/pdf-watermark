@@ -76,10 +76,9 @@ def add_watermark_from_options(
     files_options: FilesOptions,
     drawing_options: DrawingOptions,
     specific_options: Union[GridOptions, InsertOptions],
-    verbose: bool,
 ):
     def process_file(input_file, output_file):
-        if verbose or files_options.dry_run:
+        if files_options.verbose or files_options.dry_run:
             if input_file == output_file:
                 click.echo(f"modifying: {output_file}")
             else:

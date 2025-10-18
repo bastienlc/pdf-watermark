@@ -1,8 +1,10 @@
 import os
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional, Union
+from pathlib import Path
+from typing import Annotated, List
 
+from dataclass_click import argument, option
 from reportlab.lib.colors import HexColor
 from reportlab.lib.utils import ImageReader
 
@@ -50,18 +52,189 @@ def add_directory_to_files(
 
 
 @dataclass
+class FilesOptions:
+    file: Annotated[Path, argument()]
+    output: Annotated[
+        Path | None,
+        option(
+            "-s",
+            "--save",
+            default=None,
+            show_default=True,
+            help="File or folder to save results to. By default, the input files are overwritten.",
+        ),
+    ] = None
+    dry_run: Annotated[
+        bool,
+        option(
+            "--dry-run",
+            is_flag=True,
+            default=False,
+            show_default=True,
+            help="Enumerate affected files without modifying them.",
+        ),
+    ] = False
+    workers: Annotated[
+        int,
+        option(
+            "--workers",
+            default=1,
+            show_default=True,
+            help="Number of parallel workers to use. This can speed up processing of multiple files.",
+        ),
+    ] = 1
+    verbose: Annotated[
+        bool,
+        option(
+            "--verbose",
+            default=True,
+            show_default=True,
+            help="Print information about the files being processed.",
+        ),
+    ] = True
+
+    def __post_init__(self):
+        if not os.path.exists(self.file):
+            raise ValueError("Input file or directory does not exist.")
+        elif os.path.isdir(self.file):
+            if self.output is not None and str(self.output).endswith((".pdf", ".PDF")):
+                raise ValueError(
+                    "Output must be a directory when input is a directory."
+                )
+        elif os.path.isfile(self.file) and str(self.file).endswith((".pdf", ".PDF")):
+            if self.output is not None and not str(self.output).endswith(
+                (".pdf", ".PDF")
+            ):
+                raise ValueError("Output must be a pdf file when input is a pdf file.")
+        else:
+            raise ValueError("Input must be a pdf file or a directory.")
+
+        if self.output is None:
+            output = self.file
+        else:
+            output = self.output
+
+        if os.path.isfile(self.file):
+            self.input_files: List[str] = [self.file]
+            if self.output is None:
+                self.output_files: List[str] = [self.file]
+            else:
+                self.output_files = [output]
+        else:
+            self.input_files, self.output_files = add_directory_to_files(
+                str(self.file), str(output)
+            )
+
+        if len(self.input_files) != len(set(self.input_files)):
+            raise ValueError("Input files must be unique.")
+
+        if len(self.output_files) != len(set(self.output_files)):
+            raise ValueError("Output files must be unique.")
+
+    def __iter__(self):
+        return iter(zip(self.input_files, self.output_files))
+
+    def __next__(self):
+        return next(zip(self.input_files, self.output_files))
+
+
+@dataclass
 class DrawingOptions:
-    watermark: str
-    opacity: float
-    angle: float
-    text_color: str
-    text_font: str
-    text_size: int
-    unselectable: bool
-    image_scale: float
-    save_as_image: bool
-    dpi: int
-    custom_fonts_folder: Optional[str] = None
+    watermark: Annotated[str, argument()]
+    opacity: Annotated[
+        float,
+        option(
+            "-o",
+            "--opacity",
+            default=0.1,
+            show_default=True,
+            help="Watermark opacity between 0 (invisible) and 1 (no transparency).",
+        ),
+    ] = 0.1
+    angle: Annotated[
+        float,
+        option(
+            "-a",
+            "--angle",
+            default=45,
+            show_default=True,
+            help="Watermark inclination in degrees.",
+        ),
+    ] = 45
+    text_color: Annotated[
+        str,
+        option(
+            "-tc",
+            "--text-color",
+            default="#000000",
+            show_default=True,
+            help="Text color in hexadecimal format, e.g. #000000.",
+        ),
+    ] = "#000000"
+    text_font: Annotated[
+        str,
+        option(
+            "-tf",
+            "--text-font",
+            default="Helvetica",
+            show_default=True,
+            help="Text font to use. Supported fonts are those supported by reportlab, or available on the system or in the custom fonts folder.",
+        ),
+    ] = "Helvetica"
+    text_size: Annotated[
+        int,
+        option(
+            "-ts", "--text-size", default=12, show_default=True, help="Text font size."
+        ),
+    ] = 12
+    unselectable: Annotated[
+        bool,
+        option(
+            "--unselectable",
+            is_flag=True,
+            default=False,
+            show_default=True,
+            help="Make the watermark text unselectable. This works by drawing the text as an image, and thus results in a larger file size.",
+        ),
+    ] = False
+    image_scale: Annotated[
+        float,
+        option(
+            "-is",
+            "--image-scale",
+            default=1,
+            show_default=True,
+            help="Scale factor for the image. Note that before this factor is applied, the image is already scaled down to fit in the boxes.",
+        ),
+    ] = 1
+    save_as_image: Annotated[
+        bool,
+        option(
+            "--save-as-image",
+            is_flag=True,
+            default=False,
+            show_default=True,
+            help="Convert each PDF page to an image. This makes removing the watermark more difficult but also increases the file size.",
+        ),
+    ] = False
+    dpi: Annotated[
+        int,
+        option(
+            "--dpi",
+            default=300,
+            show_default=True,
+            help="DPI to use when saving the PDF as an image.",
+        ),
+    ] = 300
+    custom_fonts_folder: Annotated[
+        Path | None,
+        option(
+            "--custom-fonts-folder",
+            default=None,
+            show_default=True,
+            help="Folder path containing custom font files (TTF, OTF, etc.) to search for non-standard fonts.",
+        ),
+    ] = None
 
     def __post_init__(self):
         self.image = None
@@ -82,60 +255,38 @@ class DrawingOptions:
 
 
 @dataclass
-class FilesOptions:
-    input: str
-    output: Union[None, str]
-    dry_run: bool
-    workers: int
-
-    def __post_init__(self):
-        input = os.path.join(os.getcwd(), self.input)
-
-        if not os.path.exists(input):
-            raise ValueError("Input file or directory does not exist.")
-        elif os.path.isdir(input):
-            if self.output is not None and self.output.endswith((".pdf", ".PDF")):
-                raise ValueError(
-                    "Output must be a directory when input is a directory."
-                )
-        elif os.path.isfile(input) and input.endswith((".pdf", ".PDF")):
-            if self.output is not None and not self.output.endswith((".pdf", ".PDF")):
-                raise ValueError("Output must be a pdf file when input is a pdf file.")
-        else:
-            raise ValueError("Input must be a pdf file or a directory.")
-
-        if self.output is None:
-            output = input
-        else:
-            output = os.path.join(os.getcwd(), self.output)
-
-        if os.path.isfile(input):
-            self.input_files: List[str] = [input]
-            if self.output is None:
-                self.output_files: List[str] = [input]
-            else:
-                self.output_files = [output]
-        else:
-            self.input_files, self.output_files = add_directory_to_files(input, output)
-
-        if len(self.input_files) != len(set(self.input_files)):
-            raise ValueError("Input files must be unique.")
-
-        if len(self.output_files) != len(set(self.output_files)):
-            raise ValueError("Output files must be unique.")
-
-    def __iter__(self):
-        return iter(zip(self.input_files, self.output_files))
-
-    def __next__(self):
-        return next(zip(self.input_files, self.output_files))
-
-
-@dataclass
 class GridOptions:
-    horizontal_boxes: int
-    vertical_boxes: int
-    margin: bool
+    horizontal_boxes: Annotated[
+        int,
+        option(
+            "-h",
+            "--horizontal-boxes",
+            default=3,
+            show_default=True,
+            help="Number of repetitions of the watermark along the horizontal direction.",
+        ),
+    ] = 3
+    vertical_boxes: Annotated[
+        int,
+        option(
+            "-v",
+            "--vertical-boxes",
+            default=6,
+            show_default=True,
+            help="Number of repetitions of the watermark along the vertical direction.",
+        ),
+    ] = 6
+    margin: Annotated[
+        bool,
+        option(
+            "-m",
+            "--margin",
+            is_flag=True,
+            default=False,
+            show_default=True,
+            help="Wether to leave a margin around the page or not. When False (default), the watermark will be cut on the PDF edges.",
+        ),
+    ] = False
 
 
 class Alignments(Enum):
@@ -150,9 +301,36 @@ class Alignments(Enum):
 
 @dataclass
 class InsertOptions:
-    y: float
-    x: float
-    horizontal_alignment: str
+    y: Annotated[
+        float,
+        option(
+            "-y",
+            "--y",
+            default=0.5,
+            show_default=True,
+            help="Position of the watermark with respect to the vertical direction. Must be between 0 and 1.",
+        ),
+    ] = 0.5
+    x: Annotated[
+        float,
+        option(
+            "-x",
+            "--x",
+            default=0.5,
+            show_default=True,
+            help="Position of the watermark with respect to the horizontal direction. Must be between 0 and 1.",
+        ),
+    ] = 0.5
+    horizontal_alignment: Annotated[
+        str,
+        option(
+            "-ha",
+            "--horizontal-alignment",
+            default="center",
+            show_default=True,
+            help="Alignment of the watermark with respect to the horizontal direction. Can be one of 'left', 'right' and 'center'.",
+        ),
+    ] = "center"
 
     def __post_init__(self):
         if not Alignments.has_value(self.horizontal_alignment):

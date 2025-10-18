@@ -14,7 +14,6 @@ from pdf_watermark.options import (
     GridOptions,
     InsertOptions,
 )
-from pdf_watermark.watermark import DEFAULTS
 from tests.utils import assert_pdfs_are_close
 
 INPUT = "tests/fixtures/input.pdf"
@@ -39,54 +38,15 @@ def cleanup():
 
 
 DRAWING_OPTIONS = [
-    DrawingOptions(
-        watermark="watermark",
-        opacity=DEFAULTS.opacity,
-        angle=DEFAULTS.angle,
-        text_color=DEFAULTS.text_color,
-        text_font=DEFAULTS.text_font,
-        text_size=DEFAULTS.text_size,
-        unselectable=DEFAULTS.unselectable,
-        image_scale=DEFAULTS.image_scale,
-        save_as_image=DEFAULTS.save_as_image,
-        dpi=DEFAULTS.dpi,
-    ),
-    DrawingOptions(
-        watermark=r"watermark\nwith\nline\nbreaks",
-        opacity=DEFAULTS.opacity,
-        angle=DEFAULTS.angle,
-        text_color=DEFAULTS.text_color,
-        text_font=DEFAULTS.text_font,
-        text_size=DEFAULTS.text_size,
-        unselectable=DEFAULTS.unselectable,
-        image_scale=DEFAULTS.image_scale,
-        save_as_image=DEFAULTS.save_as_image,
-        dpi=DEFAULTS.dpi,
-    ),
+    DrawingOptions(watermark="watermark"),
+    DrawingOptions(watermark=r"watermark\nwith\nline\nbreaks"),
 ]
-
 FILES_OPTIONS = [
-    FilesOptions(INPUT, OUTPUT, dry_run=DEFAULTS.dry_run, workers=DEFAULTS.workers),
-    FilesOptions(
-        INPUT_UPPERCASE, OUTPUT, dry_run=DEFAULTS.dry_run, workers=DEFAULTS.workers
-    ),
+    FilesOptions(INPUT, OUTPUT),
+    FilesOptions(INPUT_UPPERCASE, OUTPUT),
 ]
-
-GRID_OPTIONS = [
-    GridOptions(
-        horizontal_boxes=DEFAULTS.horizontal_boxes,
-        vertical_boxes=DEFAULTS.vertical_boxes,
-        margin=DEFAULTS.margin,
-    )
-]
-
-INSERT_OPTIONS = [
-    InsertOptions(
-        y=DEFAULTS.y,
-        x=DEFAULTS.x,
-        horizontal_alignment=DEFAULTS.horizontal_alignment,
-    )
-]
+GRID_OPTIONS = [GridOptions()]
+INSERT_OPTIONS = [InsertOptions()]
 
 
 @pytest.mark.parametrize(
@@ -110,6 +70,5 @@ def test_add_watermark_from_options(
         files_options=files_options,
         drawing_options=drawing_options,
         specific_options=specific_options,
-        verbose=False,
     )
     assert_pdfs_are_close(OUTPUT, fixture)

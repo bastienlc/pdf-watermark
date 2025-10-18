@@ -85,6 +85,15 @@ Usage: watermark insert [OPTIONS] FILE WATERMARK
   watermarked.
 
 Options:
+  -s, --save PATH                 File or folder to save results to. By
+                                  default, the input files are overwritten.
+  --dry-run                       Enumerate affected files without modifying
+                                  them.
+  --workers INTEGER               Number of parallel workers to use. This can
+                                  speed up processing of multiple files.
+                                  [default: 1]
+  --verbose BOOLEAN               Print information about the files being
+                                  processed.  [default: True]
   -y, --y FLOAT                   Position of the watermark with respect to
                                   the vertical direction. Must be between 0
                                   and 1.  [default: 0.5]
@@ -96,8 +105,6 @@ Options:
                                   the horizontal direction. Can be one of
                                   'left', 'right' and 'center'.  [default:
                                   center]
-  -s, --save TEXT                 File or folder to save results to. By
-                                  default, the input files are overwritten.
   -o, --opacity FLOAT             Watermark opacity between 0 (invisible) and
                                   1 (no transparency).  [default: 0.1]
   -a, --angle FLOAT               Watermark inclination in degrees.  [default:
@@ -121,14 +128,7 @@ Options:
                                   but also increases the file size.
   --dpi INTEGER                   DPI to use when saving the PDF as an image.
                                   [default: 300]
-  --dry-run                       Enumerate affected files without modifying
-                                  them.
-  --workers INTEGER               Number of parallel workers to use. This can
-                                  speed up processing of multiple files.
-                                  [default: 1]
-  --verbose BOOLEAN               Print information about the files being
-                                  processed.  [default: True]
-  --custom-fonts-folder TEXT      Folder path containing custom font files
+  --custom-fonts-folder PATH      Folder path containing custom font files
                                   (TTF, OTF, etc.) to search for non-standard
                                   fonts.
   --help                          Show this message and exit.
@@ -147,6 +147,15 @@ Usage: watermark grid [OPTIONS] FILE WATERMARK
   watermarked.
 
 Options:
+  -s, --save PATH                 File or folder to save results to. By
+                                  default, the input files are overwritten.
+  --dry-run                       Enumerate affected files without modifying
+                                  them.
+  --workers INTEGER               Number of parallel workers to use. This can
+                                  speed up processing of multiple files.
+                                  [default: 1]
+  --verbose BOOLEAN               Print information about the files being
+                                  processed.  [default: True]
   -h, --horizontal-boxes INTEGER  Number of repetitions of the watermark along
                                   the horizontal direction.  [default: 3]
   -v, --vertical-boxes INTEGER    Number of repetitions of the watermark along
@@ -154,8 +163,6 @@ Options:
   -m, --margin                    Wether to leave a margin around the page or
                                   not. When False (default), the watermark
                                   will be cut on the PDF edges.
-  -s, --save TEXT                 File or folder to save results to. By
-                                  default, the input files are overwritten.
   -o, --opacity FLOAT             Watermark opacity between 0 (invisible) and
                                   1 (no transparency).  [default: 0.1]
   -a, --angle FLOAT               Watermark inclination in degrees.  [default:
@@ -179,14 +186,7 @@ Options:
                                   but also increases the file size.
   --dpi INTEGER                   DPI to use when saving the PDF as an image.
                                   [default: 300]
-  --dry-run                       Enumerate affected files without modifying
-                                  them.
-  --workers INTEGER               Number of parallel workers to use. This can
-                                  speed up processing of multiple files.
-                                  [default: 1]
-  --verbose BOOLEAN               Print information about the files being
-                                  processed.  [default: True]
-  --custom-fonts-folder TEXT      Folder path containing custom font files
+  --custom-fonts-folder PATH      Folder path containing custom font files
                                   (TTF, OTF, etc.) to search for non-standard
                                   fonts.
   --help                          Show this message and exit.
@@ -283,4 +283,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
+- [dataclass-click](https://github.com/couling/dataclass-click): Great tool to create click command line interfaces from dataclasses.
 - [readme template](https://gist.github.com/DomPizzie/7a5ff55ffa9081f2de27c315f5018afc)
