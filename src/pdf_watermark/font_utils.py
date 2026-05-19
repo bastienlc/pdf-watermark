@@ -4,6 +4,7 @@ Handles custom font registration including TTF and CID fonts.
 """
 
 import os
+import unicodedata
 from typing import Optional
 
 import reportlab.rl_config
@@ -42,6 +43,18 @@ STANDARD_CID_FONTS = [
     # "MHei-Medium",
     # "HYSMyeongJoStd-Medium",
 ]
+
+
+def contains_cjk(text: str) -> bool:
+    """Return True if text contains any CJK (Chinese/Japanese/Korean) characters."""
+    for ch in text:
+        name = unicodedata.name(ch, "")
+        if "CJK" in name or "HIRAGANA" in name or "KATAKANA" in name or "HANGUL" in name:
+            return True
+    return False
+
+
+DEFAULT_CJK_FONT = "STSong-Light"
 
 
 def register_custom_font(

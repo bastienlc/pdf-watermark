@@ -8,7 +8,7 @@ from dataclass_click import argument, option
 from reportlab.lib.colors import HexColor
 from reportlab.lib.utils import ImageReader
 
-from pdf_watermark.font_utils import register_custom_font
+from pdf_watermark.font_utils import DEFAULT_CJK_FONT, contains_cjk, register_custom_font
 
 
 def add_directory_to_files(
@@ -249,6 +249,20 @@ class DrawingOptions:
             self.text = self.watermark
 
         self.text_color = HexColor(self.text_color)
+
+        # Auto-switch to a CJK-capable font when text contains CJK characters and
+        # the user hasn't overridden the default (Latin-only) font.
+        if (
+            self.text is not None
+            and contains_cjk(self.text)
+            and self.text_font == "Helvetica"
+        ):
+            print(
+                f"Warning: watermark text contains CJK characters; "
+                f"switching font to '{DEFAULT_CJK_FONT}'. "
+                f"Use -tf to choose a different font."
+            )
+            self.text_font = DEFAULT_CJK_FONT
 
         # Register the font if needed
         register_custom_font(self.text_font, self.custom_fonts_folder)

@@ -32,7 +32,10 @@ def main() -> None:
     app = create_app()
 
     def _open() -> None:
-        webbrowser.open(f"http://localhost:{port}")
+        try:
+            webbrowser.open(f"http://localhost:{port}")
+        except Exception:
+            pass
 
     threading.Timer(1.0, _open).start()
     app.run(host="127.0.0.1", port=port, debug=False)
