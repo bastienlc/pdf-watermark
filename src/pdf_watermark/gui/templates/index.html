@@ -341,6 +341,7 @@
         previewLoading: false, previewErr: '',
         statusMsg: '', statusOk: true,
         _t: null,
+        _previewAbort: null,
 
         get cjkFontWarning() {
           const cjk = /[一-鿿぀-ヿ가-힯]/.test(this.watermark);
@@ -385,6 +386,7 @@
 
         debouncePreview() {
           clearTimeout(this._t);
+          if (this._previewAbort) { this._previewAbort.abort(); this._previewAbort = null; }
           this._t = setTimeout(() => this._doPreview(), 500);
         },
 
@@ -402,6 +404,8 @@
 
         async _doPreview() {
           if (!this.filePath || !this.watermark) return;
+          const ctrl = new AbortController();
+          this._previewAbort = ctrl;
           this.previewLoading = true;
           this.previewErr = '';
           try {
@@ -409,6 +413,7 @@
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(this._payload()),
+              signal: ctrl.signal,
             });
             if (!res.ok) {
               const d = await res.json();
@@ -420,20 +425,24 @@
             await this._renderCanvas(url, 'canvas-preview');
             URL.revokeObjectURL(url);
           } catch (e) {
-            this.previewErr = e.message;
+            if (e.name !== 'AbortError') this.previewErr = e.message;
           } finally {
             this.previewLoading = false;
           }
         },
 
         async _renderCanvas(url, id) {
-          const pdf  = await pdfjsLib.getDocument(url).promise;
-          const page = await pdf.getPage(1);
-          const vp   = page.getViewport({ scale: 1.4 });
-          const canvas = document.getElementById(id);
-          canvas.width  = vp.width;
-          canvas.height = vp.height;
-          await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+          const pdf = await pdfjsLib.getDocument(url).promise;
+          try {
+            const page = await pdf.getPage(1);
+            const vp   = page.getViewport({ scale: 1.4 });
+            const canvas = document.getElementById(id);
+            canvas.width  = vp.width;
+            canvas.height = vp.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+          } finally {
+            pdf.destroy();
+          }
         },
 
         _payload() {
