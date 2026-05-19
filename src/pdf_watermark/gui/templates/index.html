@@ -1,5 +1,491 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><meta charset="UTF-8"><title>PDF 浮水印工具</title></head>
-<body><h1>PDF 浮水印工具</h1></body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF 浮水印工具</title>
+  <script src="/static/alpine.min.js" defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+      background: #f0f2f5; height: 100vh; display: flex; flex-direction: column;
+    }
+    header {
+      background: #1a2634; color: #fff; padding: 10px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-shrink: 0;
+    }
+    header h1 { font-size: 1rem; font-weight: 600; letter-spacing: 0.02em; }
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    .left-panel {
+      width: 300px; min-width: 300px; background: #fff;
+      border-right: 1px solid #dde1e7; overflow-y: auto;
+      padding: 14px 16px; display: flex; flex-direction: column; gap: 11px;
+    }
+    .section-title {
+      font-size: 0.7rem; font-weight: 700; color: #888;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      border-bottom: 1px solid #f0f0f0; padding-bottom: 4px; margin-top: 4px;
+    }
+    label { font-size: 0.83rem; color: #444; display: block; margin-bottom: 3px; }
+    input[type="text"], select {
+      width: 100%; padding: 6px 9px; border: 1px solid #ccc; border-radius: 4px;
+      font-size: 0.88rem;
+      font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+      transition: border-color 0.15s;
+    }
+    input[type="text"]:focus, select:focus { outline: none; border-color: #3b82f6; }
+    input[type="text"].input-error { border-color: #ef4444; }
+    input[type="range"] { width: 100%; cursor: pointer; accent-color: #3b82f6; }
+    input[type="color"] {
+      width: 36px; height: 28px; padding: 1px 2px;
+      border: 1px solid #ccc; border-radius: 4px; cursor: pointer;
+    }
+    .slider-row { display: flex; align-items: center; gap: 8px; }
+    .slider-row input[type="range"] { flex: 1; }
+    .slider-val { font-size: 0.78rem; color: #555; min-width: 38px; text-align: right; font-variant-numeric: tabular-nums; }
+    .radio-group { display: flex; gap: 14px; }
+    .radio-group label { display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 0.85rem; }
+    .check-label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem; }
+
+    .drop-zone {
+      border: 2px dashed #bbb; border-radius: 6px; padding: 14px 10px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      color: #999; font-size: 0.82rem; user-select: none;
+    }
+    .drop-zone:hover, .drop-zone.active { border-color: #3b82f6; background: #eff6ff; color: #2563eb; }
+    .drop-zone p { margin: 0; line-height: 1.5; }
+
+    .alert { border-radius: 4px; padding: 7px 10px; font-size: 0.8rem; line-height: 1.4; }
+    .alert-warn  { background: #fefce8; border: 1px solid #fbbf24; color: #92400e; }
+    .alert-error { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+    .alert-ok    { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+
+    .adv-toggle {
+      background: none; border: none; cursor: pointer; font-size: 0.83rem;
+      color: #3b82f6; padding: 2px 0; text-align: left; width: 100%; font-family: inherit;
+    }
+    .adv-toggle:hover { text-decoration: underline; }
+    .adv-section { border-top: 1px solid #f0f0f0; padding-top: 10px; display: flex; flex-direction: column; gap: 10px; }
+
+    .btn-primary {
+      background: #2563eb; color: #fff; border: none; border-radius: 5px;
+      padding: 9px 18px; font-size: 0.9rem; cursor: pointer; font-family: inherit;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+    .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    .right-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .preview-half {
+      flex: 1; display: flex; flex-direction: column; overflow: auto;
+      padding: 10px 14px; background: #f8f9fa;
+    }
+    .preview-half:first-child { border-bottom: 2px solid #dde1e7; background: #f0f2f5; }
+    .preview-half h3 {
+      font-size: 0.72rem; font-weight: 600; color: #6b7280;
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
+    }
+    canvas { max-width: 100%; box-shadow: 0 2px 10px rgba(0,0,0,0.12); background: #fff; }
+    .preview-hint { font-size: 0.82rem; color: #9ca3af; padding: 12px 0; }
+
+    optgroup { font-weight: 700; font-size: 0.8rem; }
+    option   { font-weight: 400; }
+  </style>
+</head>
+<body x-data="app()" x-init="init()">
+
+  <header>
+    <h1>📄 PDF 浮水印工具</h1>
+    <button
+      class="btn-primary"
+      @click="process()"
+      :disabled="!filePath || processing || !watermark"
+    >
+      <span x-show="!processing">產生浮水印</span>
+      <span x-show="processing">處理中…</span>
+    </button>
+  </header>
+
+  <div class="main">
+    <div class="left-panel">
+
+      <div class="section-title">輸入檔案</div>
+
+      <div
+        class="drop-zone"
+        :class="{ active: dragOver }"
+        @dragover.prevent="dragOver = true"
+        @dragleave.prevent="dragOver = false"
+        @drop.prevent="handleDrop($event)"
+        @click="$refs.fileInput.click()"
+      >
+        <p>拖曳 PDF 到此處</p>
+        <p style="font-size:0.72rem;margin-top:3px;color:#aaa;">或點擊選擇檔案（單一 PDF）</p>
+        <input type="file" x-ref="fileInput" accept=".pdf,.PDF" style="display:none"
+               @change="handleFileInput($event)">
+      </div>
+
+      <div>
+        <label>或輸入路徑（支援單一檔案或資料夾批次）</label>
+        <input type="text" x-model="filePath"
+               :class="{ 'input-error': pathError }"
+               placeholder="C:\...\document.pdf"
+               @input.debounce.600ms="onPathInput()">
+        <div x-show="pathError" class="alert alert-error" style="margin-top:4px;" x-text="pathError"></div>
+      </div>
+
+      <div class="section-title">浮水印內容</div>
+      <div class="radio-group">
+        <label><input type="radio" value="text"  x-model="watermarkType" @change="debouncePreview()"> 文字</label>
+        <label><input type="radio" value="image" x-model="watermarkType" @change="debouncePreview()"> 圖片</label>
+      </div>
+
+      <template x-if="watermarkType === 'text'">
+        <div>
+          <label>浮水印文字</label>
+          <input type="text" x-model="watermark" @input="debouncePreview()" placeholder="機密文件">
+          <div x-show="cjkFontWarning" class="alert alert-warn" style="margin-top:5px;">
+            ⚠ 偵測到中文字元，建議改用上方「✓ 支援中文」字體
+          </div>
+        </div>
+      </template>
+
+      <template x-if="watermarkType === 'image'">
+        <div>
+          <label>圖片路徑（PNG / JPG）</label>
+          <input type="text" x-model="watermark" @input="debouncePreview()" placeholder="C:\...\logo.png">
+        </div>
+      </template>
+
+      <div class="section-title">常用設定</div>
+
+      <div>
+        <label>透明度</label>
+        <div class="slider-row">
+          <input type="range" min="0.01" max="1" step="0.01" x-model="opacity" @input="debouncePreview()">
+          <span class="slider-val" x-text="parseFloat(opacity).toFixed(2)"></span>
+        </div>
+      </div>
+
+      <div>
+        <label>角度</label>
+        <div class="slider-row">
+          <input type="range" min="0" max="360" step="1" x-model="angle" @input="debouncePreview()">
+          <span class="slider-val" x-text="angle + '°'"></span>
+        </div>
+      </div>
+
+      <template x-if="watermarkType === 'text'">
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          <div style="display:flex;gap:10px;align-items:flex-end;">
+            <div>
+              <label>顏色</label>
+              <input type="color" x-model="textColor" @input="debouncePreview()">
+            </div>
+            <div style="flex:1;">
+              <label>大小</label>
+              <div class="slider-row">
+                <input type="range" min="6" max="72" step="1" x-model="textSize" @input="debouncePreview()">
+                <span class="slider-val" x-text="textSize + 'pt'"></span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label>字體</label>
+            <select x-model="textFont" @change="debouncePreview()">
+              <optgroup label="✓ 支援中文">
+                <option value="STSong-Light">STSong-Light（宋體）</option>
+                <option value="MSung-Light">MSung-Light（明體）</option>
+                <option value="HYGothic-Medium">HYGothic-Medium（韓文黑體）</option>
+                <option value="HeiseiMin-W3">HeiseiMin-W3（日文明朝）</option>
+                <option value="HeiseiKakuGo-W5">HeiseiKakuGo-W5（日文黑體）</option>
+              </optgroup>
+              <optgroup label="僅支援英文">
+                <option value="Helvetica">Helvetica</option>
+                <option value="Helvetica-Bold">Helvetica-Bold</option>
+                <option value="Times-Roman">Times-Roman</option>
+                <option value="Courier">Courier</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+      </template>
+
+      <div>
+        <label>模式</label>
+        <div class="radio-group">
+          <label><input type="radio" value="grid"   x-model="mode" @change="debouncePreview()"> 格狀排列</label>
+          <label><input type="radio" value="insert" x-model="mode" @change="debouncePreview()"> 指定位置</label>
+        </div>
+      </div>
+
+      <button class="adv-toggle" @click="showAdvanced = !showAdvanced">
+        <span x-text="showAdvanced ? '▼' : '▶'"></span> 進階選項
+      </button>
+
+      <div x-show="showAdvanced" class="adv-section">
+
+        <template x-if="mode === 'grid'">
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div>
+              <label>水平重複</label>
+              <div class="slider-row">
+                <input type="range" min="1" max="10" step="1" x-model="horizontalBoxes" @input="debouncePreview()">
+                <span class="slider-val" x-text="horizontalBoxes"></span>
+              </div>
+            </div>
+            <div>
+              <label>垂直重複</label>
+              <div class="slider-row">
+                <input type="range" min="1" max="15" step="1" x-model="verticalBoxes" @input="debouncePreview()">
+                <span class="slider-val" x-text="verticalBoxes"></span>
+              </div>
+            </div>
+            <label class="check-label">
+              <input type="checkbox" x-model="margin" @change="debouncePreview()"> 留邊距
+            </label>
+          </div>
+        </template>
+
+        <template x-if="mode === 'insert'">
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div>
+              <label>水平位置（0=左，1=右）</label>
+              <div class="slider-row">
+                <input type="range" min="0" max="1" step="0.05" x-model="posX" @input="debouncePreview()">
+                <span class="slider-val" x-text="parseFloat(posX).toFixed(2)"></span>
+              </div>
+            </div>
+            <div>
+              <label>垂直位置（0=下，1=上）</label>
+              <div class="slider-row">
+                <input type="range" min="0" max="1" step="0.05" x-model="posY" @input="debouncePreview()">
+                <span class="slider-val" x-text="parseFloat(posY).toFixed(2)"></span>
+              </div>
+            </div>
+            <div>
+              <label>水平對齊</label>
+              <select x-model="horizontalAlignment" @change="debouncePreview()">
+                <option value="center">置中</option>
+                <option value="left">靠左</option>
+                <option value="right">靠右</option>
+              </select>
+            </div>
+          </div>
+        </template>
+
+        <div>
+          <label>平行處理數量</label>
+          <div class="slider-row">
+            <input type="range" min="1" max="8" step="1" x-model="workers">
+            <span class="slider-val" x-text="workers"></span>
+          </div>
+        </div>
+
+        <label class="check-label">
+          <input type="checkbox" x-model="unselectable" @change="debouncePreview()">
+          文字不可選取（檔案較大）
+        </label>
+
+      </div>
+
+      <div class="section-title">輸出設定</div>
+      <div>
+        <label>輸出路徑（留空則覆蓋原檔）</label>
+        <input type="text" x-model="outputPath" placeholder="C:\...\output.pdf 或資料夾">
+      </div>
+
+      <div x-show="statusMsg"
+           :class="statusOk ? 'alert alert-ok' : 'alert alert-error'"
+           x-text="statusMsg">
+      </div>
+
+    </div>
+
+    <div class="right-panel">
+      <div class="preview-half">
+        <h3>原始 PDF（第 1 頁）</h3>
+        <canvas id="canvas-original"></canvas>
+        <div x-show="!filePath" class="preview-hint">請先選擇 PDF 檔案</div>
+      </div>
+      <div class="preview-half">
+        <h3>套用後預覽（第 1 頁）</h3>
+        <canvas id="canvas-preview"></canvas>
+        <div x-show="previewLoading" class="preview-hint">預覽產生中…</div>
+        <div x-show="previewErr && !previewLoading" class="alert alert-error" x-text="previewErr"></div>
+        <div x-show="!filePath && !previewLoading && !previewErr" class="preview-hint">預覽將在此顯示</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/pdfjs/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/static/pdfjs/pdf.worker.min.js';
+
+    function app() {
+      return {
+        filePath: '', pathError: '', dragOver: false,
+        watermarkType: 'text', watermark: '機密文件',
+        opacity: 0.3, angle: 45, textColor: '#000000',
+        textFont: 'STSong-Light', textSize: 24,
+        mode: 'grid',
+        horizontalBoxes: 3, verticalBoxes: 6, margin: false,
+        posX: 0.5, posY: 0.5, horizontalAlignment: 'center',
+        workers: 1, unselectable: false,
+        outputPath: '',
+        showAdvanced: false, processing: false,
+        previewLoading: false, previewErr: '',
+        statusMsg: '', statusOk: true,
+        _t: null,
+
+        get cjkFontWarning() {
+          const cjk = /[一-鿿぀-ヿ가-힯]/.test(this.watermark);
+          const latin = ['Helvetica','Helvetica-Bold','Times-Roman','Courier',
+                         'Symbol','ZapfDingbats'].includes(this.textFont);
+          return cjk && latin;
+        },
+
+        init() {},
+
+        async handleDrop(event) {
+          this.dragOver = false;
+          const file = event.dataTransfer.files[0];
+          if (!file) return;
+          if (!file.name.match(/\.pdf$/i)) { this.pathError = '只接受 PDF 檔案'; return; }
+          await this._upload(file);
+        },
+
+        async handleFileInput(event) {
+          const file = event.target.files[0];
+          if (file) await this._upload(file);
+        },
+
+        async _upload(file) {
+          this.pathError = '';
+          const fd = new FormData();
+          fd.append('file', file);
+          const res = await fetch('/api/upload', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (data.error) { this.pathError = data.error; return; }
+          this.filePath = data.temp_path;
+          await this._loadOriginal();
+          this.debouncePreview();
+        },
+
+        async onPathInput() {
+          this.pathError = '';
+          if (!this.filePath) return;
+          await this._loadOriginal();
+          this.debouncePreview();
+        },
+
+        debouncePreview() {
+          clearTimeout(this._t);
+          this._t = setTimeout(() => this._doPreview(), 500);
+        },
+
+        async _loadOriginal() {
+          if (!this.filePath) return;
+          try {
+            await this._renderCanvas(
+              `/api/raw?path=${encodeURIComponent(this.filePath)}`,
+              'canvas-original'
+            );
+          } catch (e) {
+            this.pathError = '無法讀取 PDF：' + e.message;
+          }
+        },
+
+        async _doPreview() {
+          if (!this.filePath || !this.watermark) return;
+          this.previewLoading = true;
+          this.previewErr = '';
+          try {
+            const res = await fetch('/api/preview', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(this._payload()),
+            });
+            if (!res.ok) {
+              const d = await res.json();
+              this.previewErr = d.error || '預覽失敗';
+              return;
+            }
+            const blob = await res.blob();
+            const url  = URL.createObjectURL(blob);
+            await this._renderCanvas(url, 'canvas-preview');
+            URL.revokeObjectURL(url);
+          } catch (e) {
+            this.previewErr = e.message;
+          } finally {
+            this.previewLoading = false;
+          }
+        },
+
+        async _renderCanvas(url, id) {
+          const pdf  = await pdfjsLib.getDocument(url).promise;
+          const page = await pdf.getPage(1);
+          const vp   = page.getViewport({ scale: 1.4 });
+          const canvas = document.getElementById(id);
+          canvas.width  = vp.width;
+          canvas.height = vp.height;
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+        },
+
+        _payload() {
+          return {
+            file_path: this.filePath,
+            watermark: this.watermark,
+            opacity:   parseFloat(this.opacity),
+            angle:     parseFloat(this.angle),
+            text_color: this.textColor,
+            text_font:  this.textFont,
+            text_size:  parseInt(this.textSize),
+            mode: this.mode,
+            horizontal_boxes: parseInt(this.horizontalBoxes),
+            vertical_boxes:   parseInt(this.verticalBoxes),
+            margin:     this.margin,
+            x:          parseFloat(this.posX),
+            y:          parseFloat(this.posY),
+            horizontal_alignment: this.horizontalAlignment,
+            unselectable: this.unselectable,
+          };
+        },
+
+        async process() {
+          this.processing = true;
+          this.statusMsg  = '';
+          try {
+            const res = await fetch('/api/process', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...this._payload(),
+                output_path: this.outputPath || null,
+                workers:     parseInt(this.workers),
+              }),
+            });
+            const data = await res.json();
+            if (data.error) {
+              this.statusMsg = '錯誤：' + data.error;
+              this.statusOk  = false;
+            } else {
+              this.statusMsg = `✓ 完成！已處理 ${data.count} 個檔案 → ${data.output_path}`;
+              this.statusOk  = true;
+            }
+          } catch (e) {
+            this.statusMsg = '網路錯誤：' + e.message;
+            this.statusOk  = false;
+          } finally {
+            this.processing = false;
+          }
+        },
+      };
+    }
+  </script>
+</body>
 </html>
