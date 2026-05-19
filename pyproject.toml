@@ -23,6 +23,7 @@ dependencies = [
     "pdf2image>=1.17.0",
     "types-reportlab>=4.4.4.20250926",
     "dataclass-click>=1.0.4",
+    "flask>=3.0.0",
 ]
 
 [dependency-groups]
@@ -37,6 +38,7 @@ build-backend = "setuptools.build_meta"
 [project.scripts]
 watermark = "pdf_watermark.watermark:cli"
 pdf-watermark = "pdf_watermark.watermark:cli"
+watermark-gui = "pdf_watermark.gui.app:main"
 
 [tool.setuptools_scm]
 version_file = "src/pdf_watermark/_version.py"
