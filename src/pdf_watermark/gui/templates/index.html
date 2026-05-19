@@ -342,6 +342,7 @@
         statusMsg: '', statusOk: true,
         _t: null,
         _previewAbort: null,
+        _previewGen: 0,
 
         get cjkFontWarning() {
           const cjk = /[一-鿿぀-ヿ가-힯]/.test(this.watermark);
@@ -386,6 +387,7 @@
 
         debouncePreview() {
           clearTimeout(this._t);
+          this._previewGen++;
           if (this._previewAbort) { this._previewAbort.abort(); this._previewAbort = null; }
           this._t = setTimeout(() => this._doPreview(), 500);
         },
@@ -404,30 +406,49 @@
 
         async _doPreview() {
           if (!this.filePath || !this.watermark) return;
-          const ctrl = new AbortController();
-          this._previewAbort = ctrl;
+          const gen = this._previewGen;
           this.previewLoading = true;
           this.previewErr = '';
-          try {
-            const res = await fetch('/api/preview', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(this._payload()),
-              signal: ctrl.signal,
-            });
-            if (!res.ok) {
-              const d = await res.json();
-              this.previewErr = d.error || '預覽失敗';
-              return;
+          const isText = !this.watermark.match(/\.(png|jpg|jpeg)$/i);
+          if (isText) {
+            try {
+              await this._renderCanvas(
+                `/api/raw?path=${encodeURIComponent(this.filePath)}`,
+                'canvas-preview'
+              );
+              if (gen !== this._previewGen) return;
+              const canvas = document.getElementById('canvas-preview');
+              this._drawTextWatermark(canvas);
+            } catch (e) {
+              if (gen === this._previewGen) this.previewErr = e.message;
+            } finally {
+              if (gen === this._previewGen) this.previewLoading = false;
             }
-            const blob = await res.blob();
-            const url  = URL.createObjectURL(blob);
-            await this._renderCanvas(url, 'canvas-preview');
-            URL.revokeObjectURL(url);
-          } catch (e) {
-            if (e.name !== 'AbortError') this.previewErr = e.message;
-          } finally {
-            this.previewLoading = false;
+          } else {
+            const ctrl = new AbortController();
+            this._previewAbort = ctrl;
+            try {
+              const res = await fetch('/api/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(this._payload()),
+                signal: ctrl.signal,
+              });
+              if (!res.ok) {
+                const d = await res.json();
+                this.previewErr = d.error || '預覽失敗';
+                return;
+              }
+              const blob = await res.blob();
+              const url  = URL.createObjectURL(blob);
+              await this._renderCanvas(url, 'canvas-preview');
+              URL.revokeObjectURL(url);
+            } catch (e) {
+              if (e.name !== 'AbortError') this.previewErr = e.message;
+            } finally {
+              this.previewLoading = false;
+              this._previewAbort = null;
+            }
           }
         },
 
@@ -443,6 +464,48 @@
           } finally {
             pdf.destroy();
           }
+        },
+
+        _drawTextWatermark(canvas) {
+          const W = canvas.width;
+          const H = canvas.height;
+          if (!W || !H || !this.watermark) return;
+          const ctx = canvas.getContext('2d');
+          const scale = 1.4;
+          const fontSize = Math.round(parseInt(this.textSize) * scale);
+          const angle = parseFloat(this.angle) * Math.PI / 180;
+          const lines = this.watermark.split('\n');
+          const lineHeight = fontSize * 1.2;
+          ctx.save();
+          ctx.globalAlpha = parseFloat(this.opacity);
+          ctx.fillStyle = this.textColor;
+          ctx.font = `${fontSize}px "${this.textFont}", "Microsoft YaHei", "Microsoft JhengHei", "SimSun", serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          const drawLines = (cx, cy) => {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(-angle);
+            const startY = -lineHeight * (lines.length - 1) / 2;
+            lines.forEach((line, i) => ctx.fillText(line, 0, startY + i * lineHeight));
+            ctx.restore();
+          };
+          if (this.mode === 'grid') {
+            const hBoxes = parseInt(this.horizontalBoxes);
+            const vBoxes = parseInt(this.verticalBoxes);
+            const startIdx = this.margin ? 1 : 0;
+            for (let xi = startIdx; xi <= hBoxes; xi++) {
+              for (let yi = startIdx; yi <= vBoxes; yi++) {
+                let xPos = xi * W / hBoxes;
+                let yPos = yi * H / vBoxes;
+                if (this.margin) { xPos -= W / hBoxes / 2; yPos -= H / vBoxes / 2; }
+                drawLines(xPos, H - yPos);
+              }
+            }
+          } else {
+            drawLines(parseFloat(this.posX) * W, H - parseFloat(this.posY) * H);
+          }
+          ctx.restore();
         },
 
         _payload() {
