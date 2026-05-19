@@ -2,7 +2,7 @@ import os
 import tempfile
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request, send_file
+from flask import Flask, after_this_request, jsonify, render_template, request, send_file
 
 from pdf_watermark.font_utils import STANDARD_CID_FONTS, STANDARD_FONTS
 from pdf_watermark.handler import add_watermark_from_options
@@ -31,13 +31,19 @@ def register_routes(app: Flask) -> None:
     @app.route("/api/raw")
     def raw():
         path = request.args.get("path", "")
-        if not os.path.isfile(path):
+        resolved = Path(path).resolve() if path else None
+        if resolved is None or not resolved.is_file():
             return jsonify({"error": "檔案不存在"}), 404
-        return send_file(path, mimetype="application/pdf")
+        # Only serve PDF files (prevents serving arbitrary non-PDF content)
+        if resolved.suffix.lower() != ".pdf":
+            return jsonify({"error": "只提供 PDF 檔案"}), 403
+        return send_file(str(resolved), mimetype="application/pdf")
 
     @app.route("/api/preview", methods=["POST"])
     def preview():
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "無效的請求"}), 400
         input_path = data.get("file_path", "")
         if not os.path.isfile(input_path):
             return jsonify({"error": "找不到輸入檔案"}), 400
@@ -45,13 +51,28 @@ def register_routes(app: Flask) -> None:
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
                 output_path = f.name
             _apply_watermark(input_path, output_path, data, verbose=False)
+
+            @after_this_request
+            def _cleanup_preview(response):
+                try:
+                    os.unlink(output_path)
+                except Exception:
+                    pass
+                return response
+
             return send_file(output_path, mimetype="application/pdf")
         except Exception as e:
+            try:
+                os.unlink(output_path)
+            except Exception:
+                pass
             return jsonify({"error": str(e)}), 500
 
     @app.route("/api/process", methods=["POST"])
     def process():
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "無效的請求"}), 400
         file_path = data.get("file_path", "")
         output_path = data.get("output_path") or None
         try:
