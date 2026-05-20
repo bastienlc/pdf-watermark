@@ -17,7 +17,12 @@ if (-not (Get-Process -Id $targetPid -ErrorAction SilentlyContinue)) {
 
 try {
     & taskkill /T /F /PID $targetPid 2>$null | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "taskkill exited $LASTEXITCODE — process may still be running"
+    }
 } finally {
     Remove-Item $pidFile -ErrorAction SilentlyContinue
 }
-Write-Host "GUI stopped (PID $targetPid)"
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "GUI stopped (PID $targetPid)"
+}

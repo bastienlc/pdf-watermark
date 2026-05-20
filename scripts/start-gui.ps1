@@ -13,6 +13,7 @@ if (Test-Path $pidFile) {
     Remove-Item $pidFile
 }
 
+# cmd.exe stays alive until the Flask child exits, so its PID reliably tracks the server lifetime
 $process = Start-Process -FilePath "cmd" `
     -ArgumentList "/c", "uv run watermark-gui >> `"$logFile`" 2>&1" `
     -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru
