@@ -79,20 +79,35 @@
     .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
 
     .right-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    .preview-half {
-      flex: 1; display: flex; flex-direction: column; overflow: auto;
-      padding: 10px 14px; background: #f8f9fa;
-    }
-    .preview-half:first-child { border-bottom: 2px solid #dde1e7; background: #f0f2f5; }
-    .preview-half h3 {
-      font-size: 0.72rem; font-weight: 600; color: #6b7280;
-      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
-    }
     canvas { max-width: 100%; box-shadow: 0 2px 10px rgba(0,0,0,0.12); background: #fff; }
     .preview-hint { font-size: 0.82rem; color: #9ca3af; padding: 12px 0; }
 
     optgroup { font-weight: 700; font-size: 0.8rem; }
     option   { font-weight: 400; }
+
+    .btn-browse {
+      background: #f3f4f6; color: #374151; border: 1px solid #d1d5db;
+      border-radius: 4px; padding: 5px 10px; font-size: 0.8rem;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .btn-browse:hover { background: #e5e7eb; }
+
+    .tab-bar {
+      display: flex; background: #fff; border-bottom: 2px solid #dde1e7;
+      flex-shrink: 0;
+    }
+    .tab {
+      flex: 1; padding: 10px 6px; border: none; background: none;
+      cursor: pointer; font-size: 0.78rem; font-weight: 600;
+      color: #6b7280; font-family: inherit; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; transition: color 0.15s, border-color 0.15s;
+    }
+    .tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+    .tab:hover:not(.active) { color: #374151; }
+    .preview-body {
+      flex: 1; overflow: auto; padding: 10px 14px; background: #f8f9fa;
+    }
   </style>
 </head>
 <body x-data="app()" x-init="init()">
@@ -134,6 +149,10 @@
                :class="{ 'input-error': pathError }"
                placeholder="C:\...\document.pdf"
                @input.debounce.600ms="onPathInput()">
+        <div style="display:flex;gap:6px;margin-top:5px;">
+          <button class="btn-browse" @click="browseInput('file')">選擇檔案</button>
+          <button class="btn-browse" @click="browseInput('directory')">選擇資料夾</button>
+        </div>
         <div x-show="pathError" class="alert alert-error" style="margin-top:4px;" x-text="pathError"></div>
       </div>
 
@@ -285,17 +304,20 @@
           </div>
         </div>
 
-        <label class="check-label">
-          <input type="checkbox" x-model="unselectable" @change="debouncePreview()">
-          文字不可選取（檔案較大）
-        </label>
-
       </div>
+
+      <label class="check-label">
+        <input type="checkbox" x-model="unselectable" @change="debouncePreview()">
+        確保跨裝置顯示（點陣圖浮水印）
+      </label>
 
       <div class="section-title">輸出設定</div>
       <div>
-        <label>輸出路徑（留空則覆蓋原檔）</label>
-        <input type="text" x-model="outputPath" placeholder="C:\...\output.pdf 或資料夾">
+        <label>輸出路徑（留空則自動加 _watermark 字尾）</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="text" x-model="outputPath" style="flex:1;" placeholder="留空自動命名…">
+          <button class="btn-browse" @click="browseOutput()">瀏覽</button>
+        </div>
       </div>
 
       <div x-show="statusMsg"
@@ -306,17 +328,25 @@
     </div>
 
     <div class="right-panel">
-      <div class="preview-half">
-        <h3>原始 PDF（第 1 頁）</h3>
-        <canvas id="canvas-original"></canvas>
-        <div x-show="!filePath" class="preview-hint">請先選擇 PDF 檔案</div>
+      <div class="tab-bar">
+        <button
+          :class="activeTab === 'original' ? 'tab active' : 'tab'"
+          @click="activeTab = 'original'">原始 PDF（第 1 頁）</button>
+        <button
+          :class="activeTab === 'preview' ? 'tab active' : 'tab'"
+          @click="activeTab = 'preview'">套用後預覽（第 1 頁）</button>
       </div>
-      <div class="preview-half">
-        <h3>套用後預覽（第 1 頁）</h3>
-        <canvas id="canvas-preview"></canvas>
-        <div x-show="previewLoading" class="preview-hint">預覽產生中…</div>
-        <div x-show="previewErr && !previewLoading" class="alert alert-error" x-text="previewErr"></div>
-        <div x-show="!filePath && !previewLoading && !previewErr" class="preview-hint">預覽將在此顯示</div>
+      <div class="preview-body">
+        <div x-show="activeTab === 'original'">
+          <canvas id="canvas-original"></canvas>
+          <div x-show="!filePath" class="preview-hint">請先選擇 PDF 檔案</div>
+        </div>
+        <div x-show="activeTab === 'preview'">
+          <canvas id="canvas-preview"></canvas>
+          <div x-show="previewLoading" class="preview-hint">預覽產生中…</div>
+          <div x-show="previewErr && !previewLoading" class="alert alert-error" x-text="previewErr"></div>
+          <div x-show="!filePath && !previewLoading && !previewErr" class="preview-hint">預覽將在此顯示</div>
+        </div>
       </div>
     </div>
 
@@ -335,8 +365,9 @@
         mode: 'grid',
         horizontalBoxes: 3, verticalBoxes: 6, margin: false,
         posX: 0.5, posY: 0.5, horizontalAlignment: 'center',
-        workers: 1, unselectable: false,
+        workers: 1, unselectable: true,
         outputPath: '',
+        activeTab: 'preview',
         showAdvanced: false, processing: false,
         previewLoading: false, previewErr: '',
         statusMsg: '', statusOk: true,
@@ -385,6 +416,32 @@
           this.debouncePreview();
         },
 
+        async browseInput(type) {
+          const res = await fetch(`/api/browse?type=${type}`);
+          const data = await res.json();
+          if (data.path) {
+            this.filePath = data.path;
+            this.pathError = '';
+            await this._loadOriginal();
+            this.debouncePreview();
+          }
+        },
+
+        async browseOutput() {
+          const isFile = this.filePath.toLowerCase().endsWith('.pdf');
+          let url = '/api/browse?type=' + (isFile ? 'save' : 'directory');
+          if (isFile && this.filePath) {
+            const p = this.filePath.replace(/\\/g, '/');
+            const base = p.substring(p.lastIndexOf('/') + 1);
+            const dot = base.lastIndexOf('.');
+            const stem = dot > 0 ? base.substring(0, dot) : base;
+            url += '&initial_file=' + encodeURIComponent(stem + '_watermark.pdf');
+          }
+          const res = await fetch(url);
+          const data = await res.json();
+          if (data.path) this.outputPath = data.path;
+        },
+
         debouncePreview() {
           clearTimeout(this._t);
           this._previewGen++;
@@ -399,6 +456,7 @@
               `/api/raw?path=${encodeURIComponent(this.filePath)}`,
               'canvas-original'
             );
+            this.activeTab = 'original';
           } catch (e) {
             this.pathError = '無法讀取 PDF：' + e.message;
           }
@@ -419,6 +477,7 @@
               if (gen !== this._previewGen) return;
               const canvas = document.getElementById('canvas-preview');
               this._drawTextWatermark(canvas);
+              this.activeTab = 'preview';
             } catch (e) {
               if (gen === this._previewGen) this.previewErr = e.message;
             } finally {
@@ -443,6 +502,7 @@
               const url  = URL.createObjectURL(blob);
               await this._renderCanvas(url, 'canvas-preview');
               URL.revokeObjectURL(url);
+              this.activeTab = 'preview';
             } catch (e) {
               if (e.name !== 'AbortError') this.previewErr = e.message;
             } finally {
