@@ -11,6 +11,7 @@ coverage.xml
 # Claude Code / AI-generated files
 CLAUDE.md
 .claude/
+docs/superpowers/
 
 # Test output files (not fixtures)
 tests/fixtures/output_*.pdf
