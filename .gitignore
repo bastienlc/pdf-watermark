@@ -14,3 +14,6 @@ CLAUDE.md
 
 # Test output files (not fixtures)
 tests/fixtures/output_*.pdf
+
+# GUI process tracking
+.gui.pid
