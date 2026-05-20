@@ -17,3 +17,4 @@ tests/fixtures/output_*.pdf
 
 # GUI process tracking
 .gui.pid
+.gui.log
