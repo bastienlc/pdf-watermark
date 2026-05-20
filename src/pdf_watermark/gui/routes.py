@@ -74,13 +74,21 @@ def register_routes(app: Flask) -> None:
         if not data:
             return jsonify({"error": "無效的請求"}), 400
         file_path = data.get("file_path", "")
-        output_path = data.get("output_path") or None
-        if not output_path:
-            input_p = Path(file_path)
+        output_dir = data.get("output_dir") or None
+        input_p = Path(file_path)
+        if output_dir:
             if input_p.is_file():
                 output_path = str(
-                    input_p.parent / f"{input_p.stem}_watermark{input_p.suffix}"
+                    Path(output_dir) / f"{input_p.stem}_watermark{input_p.suffix}"
                 )
+            else:
+                output_path = output_dir
+        elif input_p.is_file():
+            output_path = str(
+                input_p.parent / f"{input_p.stem}_watermark{input_p.suffix}"
+            )
+        else:
+            output_path = None
         try:
             files_options = FilesOptions(
                 file=Path(file_path),

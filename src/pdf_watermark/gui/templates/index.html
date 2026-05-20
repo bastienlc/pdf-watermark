@@ -313,11 +313,15 @@
 
       <div class="section-title">輸出設定</div>
       <div>
-        <label>輸出路徑（留空則自動加 _watermark 字尾）</label>
+        <label>輸出資料夾（留空則存至原始目錄）</label>
         <div style="display:flex;gap:6px;align-items:center;">
-          <input type="text" x-model="outputPath" style="flex:1;" placeholder="留空自動命名…">
+          <input type="text" x-model="outputDir" style="flex:1;" placeholder="留空則與來源相同目錄"
+                 @input="saveOutputDir()">
           <button class="btn-browse" @click="browseOutput()">瀏覽</button>
         </div>
+      </div>
+      <div x-show="outputPreview" style="font-size:0.76rem;color:#6b7280;">
+        預計輸出：<span style="color:#374151;word-break:break-all;" x-text="outputPreview"></span>
       </div>
 
       <div x-show="statusMsg"
@@ -366,7 +370,7 @@
         horizontalBoxes: 3, verticalBoxes: 6, margin: false,
         posX: 0.5, posY: 0.5, horizontalAlignment: 'center',
         workers: 1, unselectable: true,
-        outputPath: '',
+        outputDir: '',
         activeTab: 'preview',
         showAdvanced: false, processing: false,
         previewLoading: false, previewErr: '',
@@ -382,7 +386,30 @@
           return cjk && latin;
         },
 
-        init() {},
+        get outputPreview() {
+          if (!this.filePath) return '';
+          const isFile = this.filePath.toLowerCase().endsWith('.pdf');
+          if (!isFile) {
+            return this.outputDir ? this.outputDir + ' (批次輸出)' : '（與輸入相同目錄）';
+          }
+          const p = this.filePath.replace(/\\/g, '/');
+          const base = p.substring(p.lastIndexOf('/') + 1);
+          const dot = base.lastIndexOf('.');
+          const stem = dot > 0 ? base.substring(0, dot) : base;
+          const filename = stem + '_watermark.pdf';
+          const dir = this.outputDir
+            ? this.outputDir.replace(/[/\\]$/, '')
+            : p.substring(0, p.lastIndexOf('/'));
+          return dir + '\\' + filename;
+        },
+
+        init() {
+          this.outputDir = localStorage.getItem('watermark_output_dir') || '';
+        },
+
+        saveOutputDir() {
+          localStorage.setItem('watermark_output_dir', this.outputDir);
+        },
 
         async handleDrop(event) {
           this.dragOver = false;
@@ -428,18 +455,12 @@
         },
 
         async browseOutput() {
-          const isFile = this.filePath.toLowerCase().endsWith('.pdf');
-          let url = '/api/browse?type=' + (isFile ? 'save' : 'directory');
-          if (isFile && this.filePath) {
-            const p = this.filePath.replace(/\\/g, '/');
-            const base = p.substring(p.lastIndexOf('/') + 1);
-            const dot = base.lastIndexOf('.');
-            const stem = dot > 0 ? base.substring(0, dot) : base;
-            url += '&initial_file=' + encodeURIComponent(stem + '_watermark.pdf');
-          }
-          const res = await fetch(url);
+          const res = await fetch('/api/browse?type=directory');
           const data = await res.json();
-          if (data.path) this.outputPath = data.path;
+          if (data.path) {
+            this.outputDir = data.path;
+            this.saveOutputDir();
+          }
         },
 
         debouncePreview() {
@@ -597,8 +618,8 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 ...this._payload(),
-                output_path: this.outputPath || null,
-                workers:     parseInt(this.workers),
+                output_dir: this.outputDir || null,
+                workers:    parseInt(this.workers),
               }),
             });
             const data = await res.json();
