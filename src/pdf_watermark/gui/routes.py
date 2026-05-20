@@ -75,6 +75,12 @@ def register_routes(app: Flask) -> None:
             return jsonify({"error": "無效的請求"}), 400
         file_path = data.get("file_path", "")
         output_path = data.get("output_path") or None
+        if not output_path:
+            input_p = Path(file_path)
+            if input_p.is_file():
+                output_path = str(
+                    input_p.parent / f"{input_p.stem}_watermark{input_p.suffix}"
+                )
         try:
             files_options = FilesOptions(
                 file=Path(file_path),
@@ -96,6 +102,36 @@ def register_routes(app: Flask) -> None:
     def fonts():
         latin = [f for f in STANDARD_FONTS if f != "DarkGardenMK"]
         return jsonify({"cjk_fonts": list(STANDARD_CID_FONTS), "latin_fonts": latin})
+
+    @app.route("/api/browse")
+    def browse():
+        import tkinter as tk
+        from tkinter import filedialog
+
+        dialog_type = request.args.get("type", "file")  # file | directory | save
+        initial_file = request.args.get("initial_file", "")
+
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+
+        path = ""
+        if dialog_type == "file":
+            path = filedialog.askopenfilename(
+                title="選擇 PDF 檔案",
+                filetypes=[("PDF 檔案", "*.pdf"), ("所有檔案", "*.*")],
+            )
+        elif dialog_type == "directory":
+            path = filedialog.askdirectory(title="選擇資料夾")
+        elif dialog_type == "save":
+            path = filedialog.asksaveasfilename(
+                title="選擇輸出位置",
+                defaultextension=".pdf",
+                filetypes=[("PDF 檔案", "*.pdf")],
+                initialfile=initial_file,
+            )
+        root.destroy()
+        return jsonify({"path": path or None})
 
 
 def _build_drawing_options(data: dict) -> DrawingOptions:
