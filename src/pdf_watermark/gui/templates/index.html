@@ -405,6 +405,9 @@
 
         init() {
           this.outputDir = localStorage.getItem('watermark_output_dir') || '';
+          const saved = localStorage.getItem('watermark_text');
+          if (saved !== null) this.watermark = saved;
+          this.$watch('watermark', val => localStorage.setItem('watermark_text', val));
         },
 
         saveOutputDir() {
