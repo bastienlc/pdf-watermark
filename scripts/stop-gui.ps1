@@ -15,6 +15,9 @@ if (-not (Get-Process -Id $targetPid -ErrorAction SilentlyContinue)) {
     exit 0
 }
 
-& taskkill /T /F /PID $targetPid 2>$null | Out-Null
-Remove-Item $pidFile
+try {
+    & taskkill /T /F /PID $targetPid 2>$null | Out-Null
+} finally {
+    Remove-Item $pidFile -ErrorAction SilentlyContinue
+}
 Write-Host "GUI stopped (PID $targetPid)"
