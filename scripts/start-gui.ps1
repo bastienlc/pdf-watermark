@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$port = if ($env:WATERMARK_GUI_PORT) { $env:WATERMARK_GUI_PORT } else { "7860" }
+[int]$port = if ($env:WATERMARK_GUI_PORT) { $env:WATERMARK_GUI_PORT } else { 7860 }
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $pidFile = Join-Path $projectRoot ".gui.pid"
 $logFile = Join-Path $projectRoot ".gui.log"
@@ -21,9 +21,8 @@ $process.Id | Out-File -FilePath $pidFile -Encoding utf8NoBOM -NoNewline
 
 Start-Sleep -Milliseconds 800
 if ($process.HasExited) {
-    Write-Error "GUI process exited immediately (exit code $($process.ExitCode)). Check $logFile for details."
     Remove-Item $pidFile -ErrorAction SilentlyContinue
-    exit 1
+    throw "GUI process exited immediately (exit code $($process.ExitCode)). Check $logFile for details."
 }
 
 Write-Host "GUI started (PID $($process.Id)) — http://localhost:$port"
