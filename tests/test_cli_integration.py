@@ -99,6 +99,23 @@ def test_cli_help_commands():
     assert "--y" in result.output
 
 
+def test_cli_save_as_image():
+    """Test that the --save-as-image option works without errors, especially related to Paths."""
+    runner = CliRunner()
+
+    command = [
+        "grid",
+        INPUT,
+        "watermark",
+        "--save",
+        OUTPUT,
+        "--save-as-image",
+    ]
+
+    result = runner.invoke(cli, command)
+    assert result.exit_code == 0
+
+
 def test_cli_dry_run():
     """Test that dry-run flag doesn't create output files."""
     runner = CliRunner()
