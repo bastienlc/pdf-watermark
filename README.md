@@ -280,6 +280,8 @@ make install
   - Add support for uvx execution
   - Extend font support, enabling custom fonts and non-latin characters
   - Migrate to dataclass-click, refactor codebase
+- 3.0.1
+  - Fix `TypeError: Cannot use PosixPath as a filename or file`
 
 ## License
 
