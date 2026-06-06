@@ -115,11 +115,11 @@ class FilesOptions:
             output = self.output
 
         if os.path.isfile(self.file):
-            self.input_files: List[str] = [self.file]
+            self.input_files: List[str] = [str(self.file)]
             if self.output is None:
-                self.output_files: List[str] = [self.file]
+                self.output_files: List[str] = [str(self.file)]
             else:
-                self.output_files = [output]
+                self.output_files = [str(output)]
         else:
             self.input_files, self.output_files = add_directory_to_files(
                 str(self.file), str(output)
