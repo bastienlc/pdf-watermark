@@ -7,3 +7,8 @@ pdf_watermark.egg-info
 _version.py
 .coverage
 coverage.xml
+.ignore
+.specify/
+.opencode/
+AGENTS.md
+specs/
