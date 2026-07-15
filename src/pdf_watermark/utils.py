@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import List, Tuple
+from typing import Tuple
 
 import numpy as np
 import pypdf
@@ -103,11 +103,3 @@ def convert_content_to_images(file_name: str, dpi: int):
         pdf.showPage()
 
     pdf.save()
-
-
-def sort_pages(pdf: pypdf.PdfWriter, order: List[int]):
-    output = pypdf.PdfWriter()
-    for index in np.argsort(order):
-        output.add_page(pdf.pages[int(index)])
-
-    return output

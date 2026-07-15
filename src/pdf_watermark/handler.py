@@ -13,7 +13,7 @@ from pdf_watermark.options import (
     GridOptions,
     InsertOptions,
 )
-from pdf_watermark.utils import convert_content_to_images, sort_pages
+from pdf_watermark.utils import convert_content_to_images
 
 
 def add_watermark_to_pdf(
@@ -24,12 +24,12 @@ def add_watermark_to_pdf(
 ):
     pdf_writer = pypdf.PdfWriter()
     pdf_to_transform = pypdf.PdfReader(input)
+    pdf_writer.clone_document_from_reader(pdf_to_transform)
 
     page_sizes = []
     for page in pdf_to_transform.pages:
         page_sizes.append((page.mediabox.width, page.mediabox.height))
 
-    order = []
     # Only one watermark is computed per page size
     for watermark_width, watermark_height in set(page_sizes):
         with NamedTemporaryFile(delete=False) as temporary_file:
@@ -51,19 +51,14 @@ def add_watermark_to_pdf(
             watermark_pdf = pypdf.PdfReader(temporary_file.name)
 
             # Add watermark to pages with the same size
-            for index, (page, (page_width, page_height)) in enumerate(
-                zip(pdf_to_transform.pages, page_sizes)
-            ):
+            for index, (page_width, page_height) in enumerate(page_sizes):
                 if page_width == watermark_width and page_height == watermark_height:
+                    page = pdf_writer.pages[index]
                     page.merge_page(watermark_pdf.pages[0])
-                    pdf_writer.add_page(page)
-                    order.append(index)
 
             # Remove temp file - https://stackoverflow.com/questions/23212435/permission-denied-to-write-to-my-temporary-file
             temporary_file.close()
             os.unlink(temporary_file.name)
-
-    pdf_writer = sort_pages(pdf_writer, order)
 
     with open(output, "wb") as f:
         pdf_writer.write(f)
