@@ -131,12 +131,12 @@ def assert_outline_equal(before: list[OutlineItem], after: list[OutlineItem]) ->
         ([("Chapter 1", 0, 0), ("Chapter 2", 0, 1), ("Chapter 3", 0, 2)], 3),  # flat
         (
             [
-                ("Chapter 1", 0, 1),
-                ("Section 1.1", 1, 2),
-                ("Section 1.2", 1, 3),
-                ("Section 1.2.1", 2, 4),
-                ("Section 1.2.2", 2, 5),
-                ("Chapter 2", 0, 6),
+                ("Chapter 1", 0, 0),
+                ("Section 1.1", 1, 1),
+                ("Section 1.2", 1, 2),
+                ("Section 1.2.1", 2, 3),
+                ("Section 1.2.2", 2, 4),
+                ("Chapter 2", 0, 5),
             ],
             6,
         ),  # nested
