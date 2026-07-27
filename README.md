@@ -282,6 +282,8 @@ make install
   - Migrate to dataclass-click, refactor codebase
 - 3.0.1
   - Fix `TypeError: Cannot use PosixPath as a filename or file`
+- 3.1.0
+  - Preserve PDF metadata when adding a watermark
 
 ## License
 
