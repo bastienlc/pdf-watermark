@@ -4,7 +4,6 @@ Handles custom font registration including TTF and CID fonts.
 """
 
 import os
-from typing import Optional
 
 import reportlab.rl_config
 from reportlab.pdfbase import pdfmetrics
@@ -45,7 +44,7 @@ STANDARD_CID_FONTS = [
 
 
 def register_custom_font(
-    font_name: str, custom_fonts_folder: Optional[str] = None
+    font_name: str, custom_fonts_folder: str | None = None
 ) -> None:
     """
     Register a custom font for use in PDF generation.
@@ -70,7 +69,7 @@ def register_custom_font(
         try:
             pdfmetrics.registerFont(UnicodeCIDFont(font_name))
             return
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             raise ValueError(f"Failed to register standard CID font '{font_name}': {e}")
 
     register_ttf_font(font_name)
@@ -89,8 +88,8 @@ def register_ttf_font(font_name: str) -> None:
         existing_fonts = pdfmetrics.getRegisteredFontNames()
         if font_name in existing_fonts:
             return
-    except Exception:
-        pass
+    except Exception:  # noqa: BLE001
+        print(f"Warning: Could not check if font '{font_name}' is already registered.")
 
     # Try different common extensions with reportlab's search
     possible_extensions = [".ttf", ".TTF", ".otf", ".OTF"]
@@ -99,7 +98,7 @@ def register_ttf_font(font_name: str) -> None:
             ttf_font = TTFont(font_name, font_name + ext)
             pdfmetrics.registerFont(ttf_font)
             return
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             if "Can't open file" not in str(e):
                 print(
                     f"Warning: Could not register font '{font_name + ext}' due to error: {e}"
@@ -119,7 +118,7 @@ def register_ttf_font(font_name: str) -> None:
     )
 
 
-def setup_custom_fonts_path(custom_fonts_folder: Optional[str] = None) -> None:
+def setup_custom_fonts_path(custom_fonts_folder: str | None = None) -> None:
     """
     Set up the custom fonts search path for reportlab.
 

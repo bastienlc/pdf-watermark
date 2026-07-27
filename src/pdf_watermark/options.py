@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Annotated, List
+from typing import Annotated
 
 from dataclass_click import argument, option
 from reportlab.lib.colors import HexColor
@@ -13,7 +13,7 @@ from pdf_watermark.font_utils import register_custom_font
 
 def add_directory_to_files(
     input_directory: str, output_directory: str
-) -> tuple[List[str], List[str]]:
+) -> tuple[list[str], list[str]]:
     """
     Recursively scan directory for PDF files and return lists of input and output file paths.
 
@@ -115,9 +115,9 @@ class FilesOptions:
             output = self.output
 
         if os.path.isfile(self.file):
-            self.input_files: List[str] = [str(self.file)]
+            self.input_files: list[str] = [str(self.file)]
             if self.output is None:
-                self.output_files: List[str] = [str(self.file)]
+                self.output_files: list[str] = [str(self.file)]
             else:
                 self.output_files = [str(output)]
         else:
@@ -334,6 +334,6 @@ class InsertOptions:
 
     def __post_init__(self):
         if not Alignments.has_value(self.horizontal_alignment):
-            raise Exception(
-                "Invalid argument. Horizontal alignment must be either left, right or center."
+            raise ValueError(
+                f"Invalid argument '{self.horizontal_alignment}' for horizontal_alignment. Must be either left, right or center."
             )

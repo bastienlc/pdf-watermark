@@ -5,7 +5,6 @@ and verify that the output matches expected fixtures.
 
 import os
 from itertools import product
-from typing import Union
 
 import pytest
 from click.testing import CliRunner
@@ -53,7 +52,7 @@ def cleanup():
 def test_cli_watermark(
     files_options: FilesOptions,
     drawing_options: DrawingOptions,
-    specific_options: Union[GridOptions, InsertOptions],
+    specific_options: GridOptions | InsertOptions,
     fixture: str,
 ):
     """Test CLI commands produce expected output PDFs."""

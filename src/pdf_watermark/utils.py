@@ -1,5 +1,4 @@
 from io import BytesIO
-from typing import Tuple
 
 import numpy as np
 import pypdf
@@ -45,7 +44,7 @@ def draw_centered_string_with_line_breaks(
         y -= watermark._leading
 
 
-def change_base(x: float, y: float, rotation_matrix: np.ndarray) -> Tuple[float, float]:
+def change_base(x: float, y: float, rotation_matrix: np.ndarray) -> tuple[float, float]:
     # Since we rotated the original coordinates system, use the inverse of the rotation matrix
     # (which is the transposed matrix) to get the coordinates we have to draw at
     new_coordinates = np.transpose(rotation_matrix) @ np.array([[x], [y]])
@@ -76,7 +75,7 @@ def convert_content_to_images(file_name: str, dpi: int):
         print(
             "Warning : the --save-as-image and --unselectable options require poppler to be installed. Proceeding without these options. Pleaser refer to the documentation for more information."
         )
-        return None
+        return
 
     # get the page sizes
     pdf_to_transform = pypdf.PdfReader(file_name)

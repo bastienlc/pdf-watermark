@@ -1,5 +1,4 @@
 from math import cos, pi, sin
-from typing import Union
 
 import numpy as np
 from reportlab.pdfgen import canvas
@@ -173,7 +172,7 @@ def draw_watermarks(
     width: float,
     height: float,
     drawing_options: DrawingOptions,
-    specific_options: Union[GridOptions, InsertOptions],
+    specific_options: GridOptions | InsertOptions,
 ):
     watermark = canvas.Canvas(file_name, pagesize=(width, height))
 

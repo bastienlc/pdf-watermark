@@ -17,7 +17,6 @@ def cli():
 
     The watermark can be repeated in a grid pattern using the grid command, or inserted at a specific position using the insert command.
     """
-    pass
 
 
 @cli.command()

@@ -1,7 +1,6 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
 from tempfile import NamedTemporaryFile
-from typing import Union
 
 import click
 import pypdf
@@ -20,7 +19,7 @@ def add_watermark_to_pdf(
     input: str,
     output: str,
     drawing_options: DrawingOptions,
-    specific_options: Union[GridOptions, InsertOptions],
+    specific_options: GridOptions | InsertOptions,
 ):
     pdf_writer = pypdf.PdfWriter()
     pdf_to_transform = pypdf.PdfReader(input)
@@ -70,7 +69,7 @@ def add_watermark_to_pdf(
 def add_watermark_from_options(
     files_options: FilesOptions,
     drawing_options: DrawingOptions,
-    specific_options: Union[GridOptions, InsertOptions],
+    specific_options: GridOptions | InsertOptions,
 ):
     def process_file(input_file, output_file):
         if files_options.verbose or files_options.dry_run:
