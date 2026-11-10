@@ -237,6 +237,10 @@ class DrawingOptions:
     ] = None
 
     def __post_init__(self):
+        if not 0 <= self.opacity <= 1:
+            raise ValueError(
+                f"Invalid opacity {self.opacity!r}. Opacity must be between 0 and 1."
+            )
         self.image = None
         self.text = None
 
